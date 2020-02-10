@@ -10,7 +10,7 @@ import 'amfe-flexible/index.min.js'
 import Vant from 'vant'
 import 'vant/lib/index.css'
 
-// 引入全局的自定义样式  因为要覆盖vant的样式
+// 引入全局的自定义样式  在vant的样式文件之后引入,因为要覆盖vant的样式
 import '@/assets/css/global.less' 
 
 Vue.use(Vant)
