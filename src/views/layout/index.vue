@@ -9,7 +9,7 @@
     <div class="my-wrapper">
       <router-view></router-view>
     </div>
-    <!-- 标签栏 (页面底部显示)
+    <!-- 标签栏 (页面底部显示(本身有样式设置))
       van-tabbar
           route: 开启路由
           v-model: 设置指定标签激活,如果使用路由模式,就不用这个属性了
