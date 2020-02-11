@@ -45,14 +45,32 @@
 </template>
 
 <script>
+// 导入登录api方法
+import { apiUserLogin } from '@/api/user.js'
+
 export default {
   name: "user-login",
   data(){
     return{
       loginForm: {
-        mobile:'',
-        code:''
+        mobile:'13911111111',
+        code:'246810'
       }
+    }
+  },
+  methods:{
+    // 登录功能
+    async login(){
+      try{
+        const result = await apiUserLogin(this.loginForm)
+        // 成功信息提示
+        this.$toast.success('登录成功')
+        // 成功后跳转页面至首页
+        this.$router.push('/')
+      }catch(err){
+        // 错误信息提示
+        this.$toast.fail('手机号或验证码错误'+err)
+    }
     }
   }
 }
