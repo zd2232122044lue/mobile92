@@ -8,7 +8,7 @@
     <van-cell-group>
       <!-- ValidationProvider: 表单域校验  用此标签把需要被校验的项目包起来
           name: 校验失败,提示当前项目名称的
-          rules: 设置校验规则,   required: 必填 
+          rules: 设置校验规则,   required: 必填  phone:自定义检验手机号规则
           v-slot: 接收"作用域插槽数据",即校验失败错误信息
                   在vue新版本中,可以通过v-slot接收作用域插槽数据,格式为 v-slot="数据名称"
                   slot-scope="stData"  {{stData.errors[0]}} 表现具体校验失败错误信息的
@@ -20,7 +20,7 @@
                     写全 v-slot="stData"  {{stData.errors[0]}}
       当前校验部分,errors[0]就可以访问到校验失败的错误信息了(固定用法)-->
 
-      <ValidationProvider name="手机号" rules="required" v-slot="{ errors }">
+      <ValidationProvider name="手机号" rules="required|phone" v-slot="{ errors }">
         <!-- 把检验的错误信息显示出来
         error-message: 显示校验失败的错误信息 
         van-field通过 :error-message 接收,显示校验错误信息
