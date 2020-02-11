@@ -54,6 +54,27 @@ instance.interceptors.request.use(
         return Promise.reject(error)
 })
     
+// 配置响应拦截器
+instance.interceptors.response.use(
+    function (response) {
+        // 正常响应处理
+        // --有时返回data,有时返回data.data
+        try {
+            return response.data.data
+        } catch (err) {
+            return response.data
+        }
+    }, function (error) {
+        // 非正常响应处理(包括401)
+        if (error.response.status === 401) {
+            // token不OK(在服务器端已经失效了,2小时时效)
+            // 强制用户重新登录系统,刷新服务器端的token时效
+            router.push('/login')
+            return new Promise(function () { })
+            // 空的promise对象,没有机会执行catch,进而不做错误提示了
+        }
+        return Promise.reject(error)
+    })
 
 
 export default instance
