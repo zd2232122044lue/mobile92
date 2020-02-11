@@ -7,7 +7,7 @@
     vant-cell-group是对普通表单域组件做封装-->
     <van-cell-group>
 
-      <!-- ValidationObserver 登录方式校验 用此标签把全部需要被校验的项目包起来
+      <!-- ValidationObserver 登录方式校验 点击登录按钮,校验全部组件.用此标签把全部需要被校验的项目包起来
       ref设置好,使得组件实例可以用this.$refs.xx的方式获得当前的组件对象-->
       <ValidationObserver ref="loginFormRef">
 
@@ -69,8 +69,18 @@
       <!--van-button
         type="info": 类型(信息按钮 蓝色)
         round：是否为圆形按钮
-      block：块级样式设置，占据一行-->
-      <van-button type="info" size="small" round block @click="login()">登录</van-button>
+        block：块级样式设置，占据一行
+        loading: 是否是加载中状态
+        loading-text:设置加载中的文字提示
+      -->
+      <van-button 
+        type="info" 
+        size="small" 
+        round block 
+        @click="login()"
+        :loading="isLogin"
+        loading-text="登录中..."
+      >登录</van-button>
     </div>
   </div>
 </template>
@@ -92,11 +102,12 @@ export default {
   },
   data() {
     return {
+      isLogin: false, // 按钮默认为正常状态 
       loginForm: {
-        mobile: "",
-        code: ""
-        // mobile: "13911111111",
-        // code: "246810"
+        // mobile: "", // 登录方式校验使用
+        // code: ""
+        mobile: "13911111111",
+        code: "246810"
       }
     };
   },
@@ -114,6 +125,9 @@ export default {
         return false
       }
 
+      // 点击登录按钮,使得按钮变为加载中
+      this.isLogin = true
+
       try {
         const result = await apiUserLogin(this.loginForm);
         // result中有 token refresh_token
@@ -127,6 +141,9 @@ export default {
         // 错误信息提示
         this.$toast.fail("手机号或验证码错误" + err);
       }
+
+      // 使得按钮变为正常状态
+      this.isLogin = false
     }
   }
 }
