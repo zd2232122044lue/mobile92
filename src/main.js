@@ -11,7 +11,10 @@ import Vant from 'vant'
 import 'vant/lib/index.css'
 
 // 引入全局的自定义样式  在vant的样式文件之后引入,因为要覆盖vant的样式
-import '@/assets/css/global.less' 
+import '@/assets/css/global.less'
+
+// 引入vee-validate校验规则文件
+import '@/utils/validate.js'
 
 Vue.use(Vant)
 
