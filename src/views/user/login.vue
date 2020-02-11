@@ -6,7 +6,12 @@
       vant里边没有form相关组件,只有普通表单域组件
     vant-cell-group是对普通表单域组件做封装-->
     <van-cell-group>
-      <!-- ValidationProvider: 表单域校验  用此标签把需要被校验的项目包起来
+
+      <!-- ValidationObserver 登录方式校验 用此标签把全部需要被校验的项目包起来
+      ref设置好,使得组件实例可以用this.$refs.xx的方式获得当前的组件对象-->
+      <ValidationObserver ref="loginFormRef">
+
+        <!-- ValidationProvider: 表单域校验  用此标签把需要被校验的项目包起来
           name: 校验失败,提示当前项目名称的
           rules: 设置校验规则,   required: 必填  phone:自定义检验手机号规则
           v-slot: 接收"作用域插槽数据",即校验失败错误信息
@@ -18,46 +23,47 @@
                     注意: 在此只能使用v-slot (用slot-scope,页面没有效果)
                   v-slot="{ errors }" 对象结构赋值 errors[0]
                     写全 v-slot="stData"  {{stData.errors[0]}}
-      当前校验部分,errors[0]就可以访问到校验失败的错误信息了(固定用法)-->
+        当前校验部分,errors[0]就可以访问到校验失败的错误信息了(固定用法)-->
 
-      <ValidationProvider name="手机号" rules="required|phone" v-slot="{ errors }">
-        <!-- 把检验的错误信息显示出来
+        <ValidationProvider name="手机号" rules="required|phone" v-slot="{ errors }">
+          <!-- 把检验的错误信息显示出来
         error-message: 显示校验失败的错误信息 
         van-field通过 :error-message 接收,显示校验错误信息
-        -->
+          -->
 
-        <!-- van-field 输入框
+          <!-- van-field 输入框
           label: 输入框左侧文本
           placeholder: 占位提示文字
           required: 是否显示表单必填红色星号
-        clearable: 是否启用清除控件-->
-        <van-field
-          v-model="loginForm.mobile"
-          type="text"
-          placeholder="请输入手机号"
-          label="手机号"
-          required
-          clearable
-          :error-message="errors[0]"
-        />
-      </ValidationProvider>
-      <ValidationProvider name="验证码" rules="required" v-slot="{ errors }">
-        <van-field
-          v-model="loginForm.code"
-          type="password"
-          placeholder="请输入验证码"
-          label="验证码"
-          required
-          clearable
-          :error-message="errors[0]"
-        >
-          <!-- van-button 按钮
+          clearable: 是否启用清除控件-->
+          <van-field
+            v-model="loginForm.mobile"
+            type="text"
+            placeholder="请输入手机号"
+            label="手机号"
+            required
+            clearable
+            :error-message="errors[0]"
+          />
+        </ValidationProvider>
+        <ValidationProvider name="验证码" rules="required" v-slot="{ errors }">
+          <van-field
+            v-model="loginForm.code"
+            type="password"
+            placeholder="请输入验证码"
+            label="验证码"
+            required
+            clearable
+            :error-message="errors[0]"
+          >
+            <!-- van-button 按钮
             type="primary": 类型(主要按钮 绿色)
             size="small": 尺寸
-          slot="button": 命名插槽应用,提示相关按钮,是要给van-field组件内部的slot去填充的-->
-          <van-button slot="button" size="small" type="primary">发送验证码</van-button>
-        </van-field>
-      </ValidationProvider>
+            slot="button": 命名插槽应用,提示相关按钮,是要给van-field组件内部的slot去填充的-->
+            <van-button slot="button" size="small" type="primary">发送验证码</van-button>
+          </van-field>
+        </ValidationProvider>
+      </ValidationObserver>
     </van-cell-group>
     <div class="login-btn">
       <!--van-button
@@ -73,25 +79,41 @@
 // 导入登录api方法
 import { apiUserLogin } from "@/api/user.js";
 // 导入表单验证模块
-import { ValidationProvider } from "vee-validate";
+// --ValidationProvider 单个
+// --ValidationObserver 全部
+import { ValidationProvider, ValidationObserver } from "vee-validate";
 
 export default {
   name: "user-login",
   components: {
     // 注册
-    ValidationProvider
+    ValidationProvider,
+    ValidationObserver
   },
   data() {
     return {
       loginForm: {
-        mobile: "13911111111",
-        code: "246810"
+        mobile: "",
+        code: ""
+        // mobile: "13911111111",
+        // code: "246810"
       }
     };
   },
   methods: {
     // 登录功能
     async login() {
+
+      // 对全部表单做校验,没有问题再向下执行
+      // --validate()返回promise对象
+      // ---valid = true  校验成功
+      // ---valid = false  校验失败
+      const valid = await this.$refs.loginFormRef.validate()
+      if(!valid){
+        // 校验失败,停止后续代码执行
+        return false
+      }
+
       try {
         const result = await apiUserLogin(this.loginForm);
         // result中有 token refresh_token
@@ -107,7 +129,7 @@ export default {
       }
     }
   }
-};
+}
 </script>
 
 <style scoped lang='less'>

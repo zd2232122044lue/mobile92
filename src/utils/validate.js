@@ -22,7 +22,7 @@ extend('phone', {
         // 正则匹配目标内容,返回boolean
         return reg.test(value)
     },
-    // 校验失败的错误信息 {_field_} 代表被校验项目的name名称
+    // 校验失败的错误信息 {_field_}字段名称占位符,代表被校验项目的name名称
     message: '{_field_}格式不正确'
 })
 
