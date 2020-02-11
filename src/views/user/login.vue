@@ -63,6 +63,9 @@ export default {
     async login(){
       try{
         const result = await apiUserLogin(this.loginForm)
+        // result中有 token refresh_token
+        // 通过vuex维护服务器端返回的token等秘钥信息
+        this.$store.commit('updateUser',result)
         // 成功信息提示
         this.$toast.success('登录成功')
         // 成功后跳转页面至首页
