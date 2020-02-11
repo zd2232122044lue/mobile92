@@ -41,5 +41,19 @@ const instance = axios.create({
     }]
 })
 
+// 配置请求拦截器
+instance.interceptors.request.use(
+    function (config) {
+        // 判断token存在再做配置(vuex判断)
+        // --根据store.user.token是否有值,判断用户是否登录系统
+        if (store.state.user.token) {
+            config.headers.Authorization = 'Bearer ' + store.state.user.token
+        }
+        return config
+    }, function (error) {
+        return Promise.reject(error)
+})
+    
+
 
 export default instance
