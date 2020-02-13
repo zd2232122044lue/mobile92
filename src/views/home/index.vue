@@ -12,8 +12,8 @@
           <!-- 父组件(home/index.vue): 通过属性值方式传递频道id到子组件 -->
         <com-article :channelID="item.id"></com-article>
       </van-tab>
-      <van-tab title="数据库">数据库内容展示</van-tab>
-      <van-tab title="后端">后端内容展示</van-tab>
+      <!-- <van-tab title="数据库">数据库内容展示</van-tab>
+      <van-tab title="后端">后端内容展示</van-tab> -->
     </van-tabs>
   </div>
 </template>
@@ -46,6 +46,7 @@ export default {
     // 获取频道列表
     async getChannelList () {
       const result = await apiChannelList()
+      console.log(result)
       // data接收频道列表
       this.channelList = result.channels
     }

@@ -14,7 +14,7 @@ import request from '@/utils/request.js'
 //         ……
 //         timestamp要赋予上次返回数据里边的pre_timestamp字段内容，就代表获得下一页数据
 //  with_top = 1  0或1 是否包含置顶，进入页面第一次请求时要包含置顶文章，1 - 包含置顶，0 - 不包含
-export function apiArticleList ({ channel_id, timestamp }) {
+export function apiArticleList ({ channel_id, timestamp }) {  // eslint-disable-line
   return request({
     url: '/app/v1_1/articles',
     method: 'get',

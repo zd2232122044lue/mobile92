@@ -57,29 +57,64 @@ export default {
       finished: false // 加载是否停止的标志,false继续加载,true瀑布流停止加载
     }
   },
-  created () {
-    // 获取文章列表
-    this.getArticleList()
-  },
+  // created () {
+  //   // 获取文章列表
+  //   this.getArticleList()
+  // },
   methods: {
-    // 瀑布流加载执行的方法
-    onLoad () {
-      // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      // setTimeout设置延迟加载效果,有1秒延迟
-      setTimeout(() => {
-        // 把数据信息追加给list数字
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1)
-        }
-        // 加载状态结束
-        this.loading = false // 清除"加载中..."效果
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true // 停止瀑布流加载
-        }
-      }, 1000)
+    // 获得文章列表
+    async getArticleList () {
+      const result = await apiArticleList({
+        channel_id: this.channelID,
+        timestamp: this.ts
+      })
+      console.log(result)
+      // // data接收文章数据 直接赋值
+      // this.articleList = result.results
+
+      // articleList对新文章数据由之前的直接赋值变为现在的push追加
+
+      // 把获得好的文章列表做return返回,具体是给onLoad瀑布使用,在瀑布流中实现push追加
+      return result
     },
+    // 瀑布流加载执行的方法
+    async onLoad () {
+      // 设置await,使得当前的axios异步进程变为同步的,先执行完,再执行后续代码
+      // --如果不这样做,articles.results.length会报错,因为articles里可能没有数据
+      // 1. 获取文章列表数据
+      const articles = await this.getArticleList()
+      if (articles.results.length > 0) {
+      // 2. 把获得到的文章数据push追加给articleList成员
+      // -- articles.results: 文章的数组对象集[{art_id,title,aut_id,pubdate},{……},{……}]
+      // -- ...articles.results: 扩展运算 {art_id,title,aut_id,pubdate},{……},{……}
+        this.articleList.push(...articles.results)
+        // 更新时间戳
+        this.ts = articles.pre_timestamp // 继续请求,可以获得下页数据
+      } else {
+      // 4. 数据耗尽,停止瀑布流
+        this.finished = true
+      }
+      // 3. 清除上拉动画效果
+      this.loading = false
+    },
+    // onLoad () {
+    // // 异步更新数据
+    // // setTimeout 仅做示例，真实场景中一般为 ajax 请求
+    // // setTimeout设置延迟加载效果,有1秒延迟
+    // setTimeout(() => {
+    //   // 把数据信息追加给list数字
+    //   for (let i = 0; i < 10; i++) {
+    //     this.list.push(this.list.length + 1)
+    //   }
+    //   // 加载状态结束
+    //   this.loading = false // 清除"加载中..."效果
+    //   // 数据全部加载完成
+    //   if (this.list.length >= 40) {
+    //     this.finished = true // 停止瀑布流加载
+    //   }
+    // }, 1000)
+    // },
+
     // 下拉刷新载入
     onRefresh () {
       setTimeout(() => {
@@ -87,16 +122,8 @@ export default {
         this.isLoading = false // 暂停拉取
         this.$toast('刷新成功')
       }, 1000)
-    },
-    // 获得文章列表
-    async getArticleList () {
-      const result = await apiArticleList({
-        channel_id: this.channelID,
-        timestamp: this.ts
-      })
-      // data接收文章数据
-      this.articleList = result.results
     }
+
   }
 }
 </script>
