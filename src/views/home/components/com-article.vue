@@ -2,7 +2,12 @@
   <!-- scroll-wrapper 固定容器，通过css样式控制能够生成滚动条，将来需要使用滚动动作。 -->
   <div class="scroll-wrapper">
       <!-- 下拉刷新 -->
-
+    <!-- van-pull-refresh: 下拉刷新
+          基础用法: 下拉刷新时会触发 refresh 事件，在事件的回调函数中可以进行同步或异步操作，
+                    操作完成后将 v-model 设置为 false，表示加载完成。
+          v-model: 是否处于加载中状态
+          @refresh: 下拉刷新时触发
+    -->
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
       <!-- 上拉刷新 -->
       <!-- van-list: 列表,瀑布流滚动加载，用于展示长列表，当列表即将滚动到底部时，会触发事件并加载更多列表项。
@@ -19,17 +24,31 @@
         <!-- van-cell: 单元格组件,内容独占一行进行显示
                     title: 标题
         -->
-        <van-cell v-for="item in list" :key="item" :title="item" />
+          <!-- 模板中使用超大整型的数字,需要执行转变为字符串,调用toString()方法 -->
+        <van-cell v-for="item in articleList" :key="item.art_id.toString()" :title="item.title" />
       </van-list>
     </van-pull-refresh>
   </div>
 </template>
 
 <script>
+// 导入获取文章的api函数
+import { apiArticleList } from '@/api/article.js'
 export default {
   name: 'com-article',
+  // 子组件(home/components/com-article.vue): 要接收父组件传的频道id,具体通过props实现
+  props: {
+    // 当前选中的频道id信息
+    channelID: {
+      type: Number,
+      required: true
+    }
+  },
   data () {
     return {
+      // 文章列表相关
+      articleList: [],
+      ts: Date.now(), // 时间戳函数,用于分页获取文章信息
       // 下拉刷新标志
       isLoading: false,
       // 上拉相关成员 瀑布流相关成员
@@ -37,6 +56,10 @@ export default {
       loading: false, // 是否显示"加载中...".加载时设置为true,加载完成再设置为false.每次onLoad执行就设置为true,执行完毕设置为false
       finished: false // 加载是否停止的标志,false继续加载,true瀑布流停止加载
     }
+  },
+  created () {
+    // 获取文章列表
+    this.getArticleList()
   },
   methods: {
     // 瀑布流加载执行的方法
@@ -64,6 +87,15 @@ export default {
         this.isLoading = false // 暂停拉取
         this.$toast('刷新成功')
       }, 1000)
+    },
+    // 获得文章列表
+    async getArticleList () {
+      const result = await apiArticleList({
+        channel_id: this.channelID,
+        timestamp: this.ts
+      })
+      // data接收文章数据
+      this.articleList = result.results
     }
   }
 }

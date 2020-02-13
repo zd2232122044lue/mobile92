@@ -8,7 +8,9 @@
       <!-- <van-tab title="推荐"> -->
       <van-tab :title="item.name" v-for="item in channelList" :key="item.id">
         <!-- 使用文章列表组件 -->
-        <com-article></com-article>
+          <!-- 获取文章列表,需要频道id条件,因此在父组件中要把当前频道id作为参数传递给子组件 -->
+          <!-- 父组件(home/index.vue): 通过属性值方式传递频道id到子组件 -->
+        <com-article :channelID="item.id"></com-article>
       </van-tab>
       <van-tab title="数据库">数据库内容展示</van-tab>
       <van-tab title="后端">后端内容展示</van-tab>
