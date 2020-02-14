@@ -46,7 +46,7 @@ export default {
   name: 'com-moreaction',
   data () {
     return {
-      isOneLevel: true // 判断展示 一级 或 二级 反垃圾内容  true: 一级 false: 二级
+      isOneLevel: true // 判断展示 一级 或 二级 反馈垃圾内容  true: 一级 false: 二级
     }
   },
   props: {
