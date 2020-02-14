@@ -14,7 +14,29 @@
         :show-confirm-button="false"
         close-on-click-overlay
       >
-      更多内容
+        <van-cell-group v-if="isOneLevel">
+            <!--icon: 图标
+                title: 标题
+                is-link: 右侧箭头图标
+                @click: 点击事件
+                icon="arrow-left": 左侧箭头
+            -->
+            <van-cell icon="location-o" title="不感兴趣" />
+            <van-cell icon="location-o" title="反馈垃圾内容" is-link @click="isOneLevel=false"/>
+            <van-cell icon="location-o" title="拉黑作者" />
+        </van-cell-group>
+        <van-cell-group v-else>
+            <van-cell icon="arrow-left" @click="isOneLevel=true"/>
+             <van-cell title="其他问题" icon="location-o"/>
+             <van-cell title="标题夸张" icon="location-o"/>
+             <van-cell title="低俗色情" icon="location-o"/>
+             <van-cell title="错别字多" icon="location-o"/>
+             <van-cell title="旧闻重复" icon="location-o"/>
+             <van-cell title="广告软文" icon="location-o"/>
+             <van-cell title="内容不实" icon="location-o"/>
+             <van-cell title="涉嫌违法犯罪" icon="location-o"/>
+             <van-cell title="侵权" icon="location-o"/>
+            </van-cell-group>
       </van-dialog>
   </div>
 </template>
@@ -24,7 +46,7 @@ export default {
   name: 'com-moreaction',
   data () {
     return {
-      show: true
+      isOneLevel: true // 判断展示 一级 或 二级 反垃圾内容  true: 一级 false: 二级
     }
   },
   props: {
