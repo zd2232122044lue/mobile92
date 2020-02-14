@@ -6,8 +6,8 @@ import store from './store'
 // 引入lib-flexible(设置 rem 基准值,也就是font-size)
 import 'amfe-flexible/index.min.js'
 
-// 引入vant组件库
-import Vant from 'vant'
+// 引入vant组件库,再按需导入Lazyload模块
+import Vant, { Lazyload } from 'vant'
 import 'vant/lib/index.css'
 
 // 引入全局的自定义样式  在vant的样式文件之后引入,因为要覆盖vant的样式
@@ -17,6 +17,7 @@ import '@/assets/css/global.less'
 import '@/utils/validate.js'
 
 Vue.use(Vant)
+Vue.use(Lazyload) // 插件完成注册，注册了一个全局指令 install(Obj){Obj.directive('lazyload',xxx)}
 
 // 创建一个延迟器
 // --给vue增加继承成员,名称为$sleep,可自定义
