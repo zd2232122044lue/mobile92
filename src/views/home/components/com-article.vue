@@ -47,6 +47,12 @@
               </van-grid-item>
             </van-grid>
             <p>
+              <!-- 给van-cell的右侧设置叉号按钮
+                  van-icon: 图标组件
+                      name: 图标样式
+              -->
+
+              <van-icon name="close" style="float:right;" @click="displayDialog()" />
               <span>作者: {{item.aut_name}}</span>&nbsp;
               <span>评论: {{item.comm_count}}</span>&nbsp;
               <!-- 使用过滤器 -->
@@ -56,14 +62,23 @@
         </van-cell>
       </van-list>
     </van-pull-refresh>
+    <!-- 更多操作组件位置(举报,不感兴趣弹出框) -->
+    <more-action v-model="showDialog"></more-action>
   </div>
 </template>
 
 <script>
 // 导入获取文章的api函数
 import { apiArticleList } from '@/api/article.js'
+// 导入com-moreaction.vue弹出框组件
+import MoreAction from './com-moreaction.vue'
+
 export default {
   name: 'com-article',
+  // 注册弹出框组件
+  components: {
+    MoreAction
+  },
   // 子组件(home/components/com-article.vue): 要接收父组件传的频道id,具体通过props实现
   props: {
     // 当前选中的频道id信息
@@ -74,6 +89,7 @@ export default {
   },
   data () {
     return {
+      showDialog: false, // 控制子组件弹出框是否显示
       // 文章列表相关
       articleList: [],
       ts: Date.now(), // 时间戳函数,用于分页获取文章信息
@@ -152,6 +168,11 @@ export default {
         this.isLoading = false // 暂停拉取
         this.$toast('刷新成功')
       }, 1000)
+    },
+
+    // 展示更多的弹层
+    displayDialog () {
+      this.showDialog = true
     }
   }
 }
