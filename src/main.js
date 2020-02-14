@@ -16,6 +16,15 @@ import '@/assets/css/global.less'
 // 引入vee-validate校验规则文件
 import '@/utils/validate.js'
 
+// 引入过滤器文件
+import * as filters from '@/utils/filters' // 过滤器
+
+// 注册全局过滤器
+Object.keys(filters).forEach(item => {
+  Vue.filter(item, filters[item])
+})
+
+// 注册
 Vue.use(Vant)
 Vue.use(Lazyload) // 插件完成注册，注册了一个全局指令 install(Obj){Obj.directive('lazyload',xxx)}
 

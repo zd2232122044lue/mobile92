@@ -49,7 +49,8 @@
             <p>
               <span>作者: {{item.aut_name}}</span>&nbsp;
               <span>评论: {{item.comm_count}}</span>&nbsp;
-              <span>时间: {{item.pubdate}}</span>&nbsp;
+              <!-- 使用过滤器 -->
+              <span>时间: {{item.pubdate | formatTime}}</span>&nbsp;
             </p>
           </template>
         </van-cell>
