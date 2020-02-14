@@ -79,6 +79,8 @@ export default {
     },
     // 瀑布流加载执行的方法
     async onLoad () {
+      // 应用延迟器,使执行速度减慢
+      await this.$sleep(800) // 该延迟器需要执行0.8秒
       // 设置await,使得当前的axios异步进程变为同步的,先执行完,再执行后续代码
       // --如果不这样做,articles.results.length会报错,因为articles里可能没有数据
       // 1. 获取文章列表数据
