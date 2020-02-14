@@ -1,7 +1,7 @@
 <template>
   <!-- scroll-wrapper 固定容器，通过css样式控制能够生成滚动条，将来需要使用滚动动作。 -->
   <div class="scroll-wrapper">
-      <!-- 下拉刷新 -->
+    <!-- 下拉刷新 -->
     <!-- van-pull-refresh: 下拉刷新
           基础用法: 下拉刷新时会触发 refresh 事件，在事件的回调函数中可以进行同步或异步操作，
                     操作完成后将 v-model 设置为 false，表示加载完成。
@@ -24,8 +24,35 @@
         <!-- van-cell: 单元格组件,内容独占一行进行显示
                     title: 标题
         -->
-          <!-- 模板中使用超大整型的数字,需要执行转变为字符串,调用toString()方法 -->
-        <van-cell v-for="item in articleList" :key="item.art_id.toString()" :title="item.title" />
+        <!-- 模板中使用超大整型的数字,需要执行转变为字符串,调用toString()方法 -->
+        <van-cell v-for="item in articleList" :key="item.art_id.toString()" :title="item.title">
+          <!-- 命名插槽: 体现label的描述信息 -->
+          <template slot="label">
+            <!-- van-grid: 宫格组件,可以在水平方向上把页面分隔成等宽度的区块，用于展示内容或进行页面导航
+            border: 设置宫格是否有边框
+            column-num: 宫格列的数目
+          van-grid-item: 宫格单元,内容区域,设置具体显示内容
+          van-image: 显示图片的组件
+            width: 宽度
+            height: 高度
+            src: 图片路径名地址
+            -->
+            <!-- 数据部分 通过cover.type  cover.images进行封面图片展示
+                      v-if: 宫格是否有机会体现 type>0
+                      column-num: type  1列 3列
+            -->
+            <van-grid :border="false" v-if="item.cover.type>0" :column-num="item.cover.type">
+              <van-grid-item v-for="(item2,k2) in item.cover.images" :key="k2">
+                <van-image width="90" height="90" :src="item2" />
+              </van-grid-item>
+            </van-grid>
+            <p>
+              <span>作者: {{item.aut_name}}</span>&nbsp;
+              <span>评论: {{item.comm_count}}</span>&nbsp;
+              <span>时间: {{item.pubdate}}</span>&nbsp;
+            </p>
+          </template>
+        </van-cell>
       </van-list>
     </van-pull-refresh>
   </div>
@@ -86,14 +113,14 @@ export default {
       // 1. 获取文章列表数据
       const articles = await this.getArticleList()
       if (articles.results.length > 0) {
-      // 2. 把获得到的文章数据push追加给articleList成员
-      // -- articles.results: 文章的数组对象集[{art_id,title,aut_id,pubdate},{……},{……}]
-      // -- ...articles.results: 扩展运算 {art_id,title,aut_id,pubdate},{……},{……}
+        // 2. 把获得到的文章数据push追加给articleList成员
+        // -- articles.results: 文章的数组对象集[{art_id,title,aut_id,pubdate},{……},{……}]
+        // -- ...articles.results: 扩展运算 {art_id,title,aut_id,pubdate},{……},{……}
         this.articleList.push(...articles.results)
         // 更新时间戳
         this.ts = articles.pre_timestamp // 继续请求,可以获得下页数据
       } else {
-      // 4. 数据耗尽,停止瀑布流
+        // 4. 数据耗尽,停止瀑布流
         this.finished = true
       }
       // 3. 清除上拉动画效果
@@ -125,7 +152,6 @@ export default {
         this.$toast('刷新成功')
       }, 1000)
     }
-
   }
 }
 </script>
