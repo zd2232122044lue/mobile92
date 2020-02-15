@@ -37,3 +37,21 @@ export function apiArticleDislike (articleID) {
     }
   })
 }
+
+// 对举报的文章做处理
+// 参数:
+//     articleID 文章id
+//     type 举报类型
+//     remark 其他问题的附加说明
+//   对象解构赋值可以设置默认值  例如remark=''
+export function apiArticleReport ({ articleID, type, remark = '' }) {
+  return request({
+    url: '/app/v1_0/article/reports',
+    method: 'post',
+    data: {
+      target: articleID,
+      type, // 对象成员简易赋值，完整写法：type:type
+      remark // 其他问题 的附加说明
+    }
+  })
+}

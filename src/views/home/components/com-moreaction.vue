@@ -7,12 +7,14 @@
             @input: 当前组件的value值发生变化,要传递给父组件的v-model里边去,使得弹出框可以不断完成关闭,显示动作
                 $emit('input',$event)就是这样配置,van-dialog内部已经把$event.target.value都集成好了
                   如果当前的标签是普通的input标签,那就要写成$emit('input',$event.target.value)
+             @close: 关闭弹窗,恢复状态
       -->
       <van-dialog
         :value="value"
         @input="$emit('input',$event)"
         :show-confirm-button="false"
         close-on-click-overlay
+        @close="isOneLevel=true"
       >
         <van-cell-group v-if="isOneLevel">
             <!--icon: 图标
@@ -27,28 +29,38 @@
         </van-cell-group>
         <van-cell-group v-else>
             <van-cell icon="arrow-left" @click="isOneLevel=true"/>
-             <van-cell title="其他问题" icon="location-o"/>
-             <van-cell title="标题夸张" icon="location-o"/>
-             <van-cell title="低俗色情" icon="location-o"/>
-             <van-cell title="错别字多" icon="location-o"/>
-             <van-cell title="旧闻重复" icon="location-o"/>
-             <van-cell title="广告软文" icon="location-o"/>
-             <van-cell title="内容不实" icon="location-o"/>
-             <van-cell title="涉嫌违法犯罪" icon="location-o"/>
-             <van-cell title="侵权" icon="location-o"/>
+             <van-cell
+              v-for="item in reportsList"
+              :key="item.value"
+              :title="item.title"
+              icon="location-o"
+              @click="articleReport(item.value)"
+              />
             </van-cell-group>
       </van-dialog>
   </div>
 </template>
 
 <script>
-// 导入不感兴趣文章api函数
-import { apiArticleDislike } from '@/api/article.js'
+// 导入不感兴趣文章,举报文章api函数
+import { apiArticleDislike, apiArticleReport } from '@/api/article.js'
 
 export default {
   name: 'com-moreaction',
   data () {
     return {
+      // 举报类型
+      reportsList: [
+        { title: '其他问题', value: 0 },
+        { title: '标题夸张', value: 1 },
+        { title: '低俗色情', value: 2 },
+        { title: '错别字多', value: 3 },
+        { title: '旧闻重复', value: 4 },
+        { title: '广告软文', value: 5 },
+        { title: '内容不实', value: 6 },
+        { title: '涉嫌违法犯罪', value: 7 },
+        { title: '侵权', value: 8 }
+      ],
       isOneLevel: true // 判断展示 一级 或 二级 反馈垃圾内容  true: 一级 false: 二级
     }
   },
@@ -73,6 +85,22 @@ export default {
       this.$emit('input', false)
       // 调用自己的dislikeSuccess事件,完成页面文章删除功能
       this.$emit('dislikeSuccess')
+    },
+    // 对举报的文章做处理  (type:类型)
+    async articleReport (type) {
+      try {
+        await apiArticleReport({ articleID: this.articleID, type })
+      } catch (err) {
+        if (err.response.status === 409) {
+          return this.$toast.fail('文章已经被举报过了')
+        } else {
+          return this.$toast.fail('文章举报失败')
+        }
+      }
+      // 成功提示
+      this.$toast.success('举报成功!!')
+      // 让弹出框消失
+      this.$emit('input', false)
     }
   }
 }
