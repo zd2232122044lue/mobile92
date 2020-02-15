@@ -19,6 +19,6 @@ export function apiChannelList () {
 export function apiChannelAll () {
   return request({
     url: '/app/v1_0/channels',
-    method:'get'
+    method: 'get'
   })
 }

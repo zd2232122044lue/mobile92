@@ -24,14 +24,14 @@
           <span class="desc">点击进入频道</span>
         </div>
         <div>
-            <!-- plain: 是否为朴素按钮
-                 round: 是否为原形按钮
-            -->
+          <!-- plain: 是否为朴素按钮
+               round: 是否为原形按钮
+          -->
           <van-button type="danger" plain size="mini" round>编辑</van-button>
         </div>
       </div>
       <!--van-grid 没有设置column-num属性，默认是4列-->
-            <!-- clickable: 是否开启格子点击反馈 -->
+      <!-- clickable: 是否开启格子点击反馈 -->
       <van-grid class="channel-content" :gutter="10" clickable>
         <!-- 宫格内容表现:
                 1.text属性,设置简单内容
@@ -53,8 +53,9 @@
         </div>
       </div>
       <van-grid class="channel-content" :gutter="10" clickable>
-        <van-grid-item v-for="item in channelAll" :key="item.id">
-          <div class="info" slot="text">
+        <!-- <van-grid-item v-for="item in channelAll" :key="item.id"> -->
+       <van-grid-item v-for="item in restChannel" :key="item.id">
+          <div class="info">
             <span class="text">{{item.name}}</span>
           </div>
         </van-grid-item>
@@ -87,6 +88,26 @@ export default {
       default: 0
     }
   },
+  computed: {
+    // 获得剩余频道(全部频道-我的频道)
+    restChannel () {
+      // 把"我的频道"的全部id获得到,以数组格式返回
+      // --map方法 对channelList做遍历,返回一个新数组
+      //  元素就是channelList数组各个元素的id值,数组长度与channelList一致
+      const userChannelIds = this.channelList.map(item => {
+        return item.id
+      })
+      // 遍历全部频道,筛选出来不在"我的频道"中出现的频道
+      // --filter方法 对channelAll 做筛选,让id值不在userChannelIds数组中出现的元素通过
+      // --includes方法 判断数组是否包含指定的元素
+      //  返回新数组
+      const rest = this.channelAll.filter(item => {
+        return !userChannelIds.includes(item.id)
+      })
+      // 返回筛选好的 剩余的频道
+      return rest
+    }
+  },
   data () {
     return {
       channelAll: [] // 全部频道
@@ -107,7 +128,7 @@ export default {
 
 <style lang="less" scoped>
 .channel {
-  margin-top:70px;
+  margin-top: 70px;
   .channel-head {
     display: flex;
     justify-content: space-between;
@@ -119,7 +140,7 @@ export default {
     }
     .desc {
       font-size: 16px;
-      color:gray;
+      color: gray;
     }
   }
   .channel-content {

@@ -13,7 +13,15 @@
         <!-- 图标  name="wap-nav" 3杠图标 -->
         <van-icon name="wap-nav" />
       </div>
-      <!-- 使用频道弹出层组件 -->
+      <!-- <van-tab title="推荐"> -->
+      <van-tab :title="item.name" v-for="item in channelList" :key="item.id">
+        <!-- 使用文章列表组件 -->
+        <!-- 获取文章列表,需要频道id条件,因此在父组件中要把当前频道id作为参数传递给子组件 -->
+        <!-- 父组件(home/index.vue): 通过属性值方式传递频道id到子组件 -->
+        <com-article :channelID="item.id"></com-article>
+      </van-tab>
+    </van-tabs>
+    <!-- 使用频道弹出层组件 -->
         <!-- :channelList="channelList": 把当前用户拥有的频道传递给频道组件里边显示
              :activeChannelIndex="activeChannelIndex": 当前激活频道项目的下标
         -->
@@ -22,16 +30,6 @@
         :channelList="channelList"
         :activeChannelIndex="activeChannelIndex"
       ></com-channel>
-      <!-- <van-tab title="推荐"> -->
-      <van-tab :title="item.name" v-for="item in channelList" :key="item.id">
-        <!-- 使用文章列表组件 -->
-        <!-- 获取文章列表,需要频道id条件,因此在父组件中要把当前频道id作为参数传递给子组件 -->
-        <!-- 父组件(home/index.vue): 通过属性值方式传递频道id到子组件 -->
-        <com-article :channelID="item.id"></com-article>
-      </van-tab>
-      <!-- <van-tab title="数据库">数据库内容展示</van-tab>
-      <van-tab title="后端">后端内容展示</van-tab>-->
-    </van-tabs>
   </div>
 </template>
 
