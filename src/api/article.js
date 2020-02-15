@@ -25,3 +25,15 @@ export function apiArticleList ({ channel_id, timestamp }) {  // eslint-disable
     }
   })
 }
+
+// 对不感兴趣的文章做处理
+// 参数: articleID 文章id
+export function apiArticleDislike (articleID) {
+  return request({
+    url: '/app/v1_0/article/dislikes',
+    method: 'post',
+    data: {
+      target: articleID
+    }
+  })
+}

@@ -52,7 +52,7 @@
                       name: 图标样式
               -->
 
-              <van-icon name="close" style="float:right;" @click="displayDialog()" />
+              <van-icon name="close" style="float:right;" @click="displayDialog(item.art_id.toString())" />
               <span>作者: {{item.aut_name}}</span>&nbsp;
               <span>评论: {{item.comm_count}}</span>&nbsp;
               <!-- 使用过滤器 -->
@@ -63,7 +63,7 @@
       </van-list>
     </van-pull-refresh>
     <!-- 更多操作组件位置(举报,不感兴趣弹出框) -->
-    <more-action v-model="showDialog"></more-action>
+    <more-action v-model="showDialog" :articleID="nowArticleID" @dislikeSuccess="handleDislikeSuccess"></more-action>
   </div>
 </template>
 
@@ -89,6 +89,7 @@ export default {
   },
   data () {
     return {
+      nowArticleID: '', // 不感兴趣文章id
       showDialog: false, // 控制子组件弹出框是否显示
       // 文章列表相关
       articleList: [],
@@ -170,9 +171,22 @@ export default {
       }, 1000)
     },
 
-    // 展示更多的弹层
-    displayDialog () {
+    // 展示更多操作对话框
+    // --artID: 不喜欢文章id
+    displayDialog (artID) {
       this.showDialog = true
+      this.nowArticleID = artID
+    },
+
+    // 文章不感兴趣后续处理(客户端处理)
+    handleDislikeSuccess () {
+      // 从articleList文章列表中把目标文章(nowArticleID)给删除
+      // --根据nowArticleID把其在articleList数组中的下标值获得到
+      // ----findIndex: 获取指定数组元素下标
+      const index = this.articleList.findIndex(item => item.art_id.toString() === this.nowArticleID)
+      // --根据下标 从articleList中做删除操作
+      // ----数组.splice(下标,长度) 删除数组的指定元素
+      this.articleList.splice(index, 1)
     }
   }
 }

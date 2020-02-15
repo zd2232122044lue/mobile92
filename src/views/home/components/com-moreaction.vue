@@ -21,7 +21,7 @@
                 @click: 点击事件
                 icon="arrow-left": 左侧箭头
             -->
-            <van-cell icon="location-o" title="不感兴趣" />
+            <van-cell icon="location-o" title="不感兴趣" @click="articleDislike()"/>
             <van-cell icon="location-o" title="反馈垃圾内容" is-link @click="isOneLevel=false"/>
             <van-cell icon="location-o" title="拉黑作者" />
         </van-cell-group>
@@ -42,6 +42,9 @@
 </template>
 
 <script>
+// 导入不感兴趣文章api函数
+import { apiArticleDislike } from '@/api/article.js'
+
 export default {
   name: 'com-moreaction',
   data () {
@@ -53,6 +56,23 @@ export default {
     value: {
       type: Boolean,
       default: false
+    },
+    // 接收不喜欢文章id
+    articleID: {
+      type: String,
+      required: true
+    }
+  },
+  methods: {
+    // 对不感兴趣文章做处理
+    async articleDislike () {
+      await apiArticleDislike(this.articleID)
+      // 删除成功提示
+      this.$toast.success('处理成功!!')
+      // 让弹出框消失
+      this.$emit('input', false)
+      // 调用自己的dislikeSuccess事件,完成页面文章删除功能
+      this.$emit('dislikeSuccess')
     }
   }
 }
