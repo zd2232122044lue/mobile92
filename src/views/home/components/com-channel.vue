@@ -5,7 +5,7 @@
         closeable: 是否显示关闭图标
         round: 是否显示圆角
         position: 弹出位置,可选值为 top bottom right left
-        :style="{height: '90%'}": 弹出层高度
+        :style="{height: '95%'}": 弹出层高度
         close-icon-position: 关闭图标位置,可选值为top-left bottom-left bottom-right
   -->
   <van-popup
@@ -14,7 +14,7 @@
     closeable
     round
     position="bottom"
-    :style="{height: '90%'}"
+    :style="{height: '95%'}"
     close-icon-position="top-left"
   >
     <div class="channel">
@@ -33,8 +33,13 @@
       <!--van-grid 没有设置column-num属性，默认是4列-->
             <!-- clickable: 是否开启格子点击反馈 -->
       <van-grid class="channel-content" :gutter="10" clickable>
-        <van-grid-item v-for="value in 8" :key="value" text="文字">
-          <span class="text">文字</span>
+        <!-- 宫格内容表现:
+                1.text属性,设置简单内容
+                2.匿名插槽,设置复杂内容
+        -->
+        <!-- <van-grid-item v-for="value in 8" :key="value" text="文字"> -->
+        <van-grid-item v-for="(item,k) in channelList" :key="item.id">
+          <span class="text" :style="{color:k===activeChannelIndex?'red':''}">{{item.name}}</span>
           <!-- <van-icon class="close-icon" name="close" /> -->
         </van-grid-item>
       </van-grid>
@@ -66,6 +71,17 @@ export default {
     value: {
       type: Boolean,
       default: false
+    },
+    // 接收父组件传递过来的"我的频道"数据
+    channelList: {
+      type: Array,
+      // 数组的默认值要通过箭头函数方式设置
+      default: () => []
+    },
+    // 当前激活频道的下标
+    activeChannelIndex: {
+      type: Number,
+      default: 0
     }
   }
 }

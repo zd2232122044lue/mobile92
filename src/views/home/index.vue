@@ -14,7 +14,14 @@
         <van-icon name="wap-nav" />
       </div>
       <!-- 使用频道弹出层组件 -->
-      <com-channel v-model="showChannel"></com-channel>
+        <!-- :channelList="channelList": 把当前用户拥有的频道传递给频道组件里边显示
+             :activeChannelIndex="activeChannelIndex": 当前激活频道项目的下标
+        -->
+      <com-channel
+        v-model="showChannel"
+        :channelList="channelList"
+        :activeChannelIndex="activeChannelIndex"
+      ></com-channel>
       <!-- <van-tab title="推荐"> -->
       <van-tab :title="item.name" v-for="item in channelList" :key="item.id">
         <!-- 使用文章列表组件 -->
