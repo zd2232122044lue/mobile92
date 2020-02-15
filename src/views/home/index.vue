@@ -30,11 +30,11 @@
 
 <script>
 // 导入频道弹出层组件
-import ComChannel from './components/com-channel';
+import ComChannel from './components/com-channel'
 // 导入文章列表组件
-import ComArticle from './components/com-article';
+import ComArticle from './components/com-article'
 // 导入频道列表api函数
-import { apiChannelList } from '@/api/channel.js';
+import { apiChannelList } from '@/api/channel.js'
 
 export default {
   name: 'home-index',
