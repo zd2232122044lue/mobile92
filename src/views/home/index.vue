@@ -5,6 +5,14 @@
       title: 标题
     -->
     <van-tabs v-model="activeChannelIndex">
+      <!-- 给标签页设置图标,用法是命名插槽
+              slot="nav-right/right" 图标放置的位置
+              class="channel-more" 设置css样式
+      -->
+      <div slot="nav-right" class="channel-more">
+         <!-- 图标  name="wap-nav" 3杠图标 -->
+        <van-icon name="wap-nav" />
+      </div>
       <!-- <van-tab title="推荐"> -->
       <van-tab :title="item.name" v-for="item in channelList" :key="item.id">
         <!-- 使用文章列表组件 -->
@@ -55,6 +63,19 @@ export default {
 </script>
 
 <style scoped lang='less'>
+// 给 更多 频道获得样式
+.channel-more{
+  position:fixed;
+  right:0;
+  background-color: white;
+  line-height:88px;
+  height:88px;
+  width: 90px;
+  text-align:center;
+  font-size:40px;
+}
+
+// 频道列表
 .van-tabs {
   // 弹性布局
   display: flex;
