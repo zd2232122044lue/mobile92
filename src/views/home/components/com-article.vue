@@ -7,8 +7,15 @@
                     操作完成后将 v-model 设置为 false，表示加载完成。
           v-model: 是否处于加载中状态
           @refresh: 下拉刷新时触发
+          success-text: 刷新成功提示文案
+          success-duration: 刷新成功提示展示时长(ms)
     -->
-    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+    <van-pull-refresh
+      v-model="isLoading"
+      @refresh="onRefresh"
+      :success-text="downSuccessText"
+      :success-duration="1000"
+    >
       <!-- 上拉刷新 -->
       <!-- van-list: 列表,瀑布流滚动加载，用于展示长列表，当列表即将滚动到底部时，会触发事件并加载更多列表项。
             基础用法: List 组件通过loading和finished两个变量控制加载状态，当组件滚动到底部时，
@@ -89,6 +96,8 @@ export default {
   },
   data () {
     return {
+      // 下拉动作完成的文字提示
+      downSuccessText: '', // 文章更新成功/文章已经是最新的
       nowArticleID: '', // 不感兴趣文章id
       showDialog: false, // 控制子组件弹出框是否显示
       // 文章列表相关
@@ -163,12 +172,31 @@ export default {
     // },
 
     // 下拉刷新载入
-    onRefresh () {
-      setTimeout(() => {
-        this.onLoad() // 获取数据一次
-        this.isLoading = false // 暂停拉取
-        this.$toast('刷新成功')
-      }, 1000)
+    async onRefresh () {
+      // 应用延迟器,使执行速度减慢
+      await this.$sleep(800) // 该延迟器需要执行0.8秒
+      // 获得文章列表数据
+      const articles = await this.getArticleList()
+      // 判断是否有获得到最新的文章
+      if (articles.results.length > 0) {
+        // 有获得到unshift数组前置追加元素
+        this.articleList.unshift(...articles.results)
+        // 更新时间戳
+        this.ts = articles.pre_timestamp // 使得继续请求,可以获得下页数据
+        this.downSuccessText = '文章更新成功!!'
+      } else {
+        // 没有最新的文章了,页面要给与提示
+        this.downSuccessText = '文章已经是最新的'
+      }
+      // 加载完成,下拉动画消失
+      this.isLoading = false
+
+    // onRefresh () {
+      // setTimeout(() => {
+      //   this.onLoad() // 获取数据一次
+      //   this.isLoading = false // 暂停拉取
+      //   this.$toast('刷新成功')
+      // }, 1000)
     },
 
     // 展示更多操作对话框
