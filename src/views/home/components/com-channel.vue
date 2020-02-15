@@ -53,9 +53,9 @@
         </div>
       </div>
       <van-grid class="channel-content" :gutter="10" clickable>
-        <van-grid-item v-for="value in 8" :key="value" text="文字">
-          <div class="info">
-            <span class="text">文字</span>
+        <van-grid-item v-for="item in channelAll" :key="item.id">
+          <div class="info" slot="text">
+            <span class="text">{{item.name}}</span>
           </div>
         </van-grid-item>
       </van-grid>
@@ -64,6 +64,9 @@
 </template>
 
 <script>
+// 导入获得所有频道数据的api函数
+import { apiChannelAll } from '@/api/channel.js'
+
 export default {
   name: 'com-channel',
   props: {
@@ -82,6 +85,21 @@ export default {
     activeChannelIndex: {
       type: Number,
       default: 0
+    }
+  },
+  data () {
+    return {
+      channelAll: [] // 全部频道
+    }
+  },
+  created () {
+    this.getChannelAll()
+  },
+  methods: {
+    // 获得全部频道
+    async getChannelAll () {
+      const result = await apiChannelAll()
+      this.channelAll = result.channels
     }
   }
 }
