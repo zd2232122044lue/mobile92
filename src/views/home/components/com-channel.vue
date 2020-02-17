@@ -148,6 +148,14 @@ export default {
       this.channelList.splice(index, 1)
       // 2.localStorage永久删除
       apiChannelDel(channelID)
+
+      // 如果被删除的频道是最后一个,那么设置它之前的那个频道被激活使用
+      // 算法: activeChannelIndex -= 1
+      // activeChannelIndex 是父组件给传递过来的.即子组件要修改父组件传递过来的数据
+      // 判断是否删除的是最后一个项目: 项目删除后的长度 === 删除项目的下标
+      if (this.channelList.length === index) {
+        this.$emit('update:activeChannelIndex', index - 1)
+      }
     }
   }
 }
