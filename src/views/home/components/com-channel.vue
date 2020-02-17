@@ -16,6 +16,7 @@
     position="bottom"
     :style="{height: '95%'}"
     close-icon-position="top-left"
+    @close="isEdit=false"
   >
     <div class="channel">
       <div class="channel-head">
@@ -38,7 +39,7 @@
                 2.匿名插槽,设置复杂内容
         -->
         <!-- <van-grid-item v-for="value in 8" :key="value" text="文字"> -->
-        <van-grid-item v-for="(item,k) in channelList" :key="item.id">
+        <van-grid-item v-for="(item,k) in channelList" :key="item.id" @click="clkChannel(item.id,k)">
           <span class="text" :style="{color:k===activeChannelIndex?'red':''}">{{item.name}}</span>
           <!-- van-icon: 图标组件
                   name="close": 叉号图标
@@ -156,6 +157,19 @@ export default {
       if (this.channelList.length === index) {
         this.$emit('update:activeChannelIndex', index - 1)
       }
+    },
+    // 在"我的频道"中 单击后要激活该频道
+    clkChannel (channelID, index) {
+      // 判断如果进入编辑状态,就执行删除逻辑("推荐"项目不要执行)
+      if (this.isEdit && index > 0) {
+        this.userToRest(channelID, index)
+        return false // 停止后续代码执行
+      }
+      // 1.频道弹出层消失
+      this.$emit('input', false)
+      // 2.home/index.vue页面要激活当前单击到的频道并展示对应的文章
+      // --修改 activeChannelIndex的值为index即可(子组件修改父组件传递的变量)
+      this.$emit('update:activeChannelIndex', index)
     }
   }
 }
