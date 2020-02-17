@@ -38,9 +38,19 @@ export default {
         this.suggestionList = [] // 清除联想数据
         return false
       }
-      const result = await apiSuggestionList({ q: newV })
-      // data接收联想建议数据
-      this.suggestionList = result.options
+
+      // 针对this.timer做清除操作,防止定时器累加
+      // 另一好处:用户频繁输入,间隔时间没有超过一秒,就没有请求动作
+      clearTimeout(this.timer)
+
+      // 设置防抖,防止频繁发送请求
+      // --timer是组件data的成员,就是临时的,不用在data中事先声明
+      // --this.timer表示给 组件实例 动态增加一个data成员，临时使用的可以不用提前声明
+      this.timer = setTimeout(async () => {
+        const result = await apiSuggestionList({ q: newV })
+        // data接收联想建议数据
+        this.suggestionList = result.options
+      }, 1000)
     }
   }
 }
