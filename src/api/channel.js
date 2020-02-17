@@ -20,6 +20,29 @@ import store from '@/store'
 // 本地持久化存储频道设置的key
 const CHANNEL_KEY_TRAVEL = 'hm-channel-travel' // 游客key
 const CHANNEL_KET_VIP = 'hm-channel-vip' // 登录用户Key
+
+// 添加频道
+export function apiChannelAdd (channel) {
+  return new Promise(function (resolve) {
+    const key = store.state.user.token ? CHANNEL_KET_VIP : CHANNEL_KEY_TRAVEL // 获取缓存的key
+
+    const localChannels = localStorage.getItem(key) // 获取本地缓存,即原有的"我的频道"数据
+    // 频道不会为空，最少会保留“推荐”频道项目
+
+    // 缓存有数据
+    const channels = JSON.parse(localChannels) // 频道 字符串 变为 对象
+    // localStorage内部存储的频道数据样子
+    // channels [{id:xx,name:xx},{id:xx,name:xx}……]
+    channels.push(channel) // 添加channel {id:xx,name:xx}
+
+    // 重新写入缓存
+    localStorage.setItem(key, JSON.stringify(channels))
+    // 成功执行，没有任何返回信息(添加操作代码、系统没有问题，业务上不会出错)
+    // 成功率100%
+    resolve()
+  })
+}
+
 // 获取用户频道列表数据
 export function apiChannelList () {
   // 通过Promise封装,通过resolve返回输出具体信息,await修饰就接收到了,在home/index.vue中await apiChannelList()

@@ -54,7 +54,7 @@
       </div>
       <van-grid class="channel-content" :gutter="10" clickable>
         <!-- <van-grid-item v-for="item in channelAll" :key="item.id"> -->
-       <van-grid-item v-for="item in restChannel" :key="item.id">
+       <van-grid-item v-for="item in restChannel" :key="item.id" @click="restToUser(item)">
           <div class="info">
             <span class="text">{{item.name}}</span>
           </div>
@@ -65,8 +65,8 @@
 </template>
 
 <script>
-// 导入获得所有频道数据的api函数
-import { apiChannelAll } from '@/api/channel.js'
+// 导入 获得所有频道数据,添加频道数据 的api函数
+import { apiChannelAll, apiChannelAdd } from '@/api/channel.js'
 
 export default {
   name: 'com-channel',
@@ -121,6 +121,15 @@ export default {
     async getChannelAll () {
       const result = await apiChannelAll()
       this.channelAll = result.channels
+    },
+    // 添加频道(把"推荐频道"里边的数据添加到"我的频道")
+    restToUser (channel) {
+      // 1.页面更新数据
+      // --channelList 父组件给传递过来的,本身是一个对象,他们的传值模式是"引用"方式
+      // --父,子组件关于channelList共同操作,一方修改,另一方也可以感知
+      this.channelList.push(channel)
+      // 2.localStorage持久更新
+      apiChannelAdd(channel)
     }
   }
 }
