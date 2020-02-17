@@ -27,7 +27,7 @@
           <!-- plain: 是否为朴素按钮
                round: 是否为原形按钮
           -->
-          <van-button type="danger" plain size="mini" round>编辑</van-button>
+          <van-button type="danger" plain size="mini" round @click="isEdit=!isEdit">{{isEdit?'完成':'编辑'}}</van-button>
         </div>
       </div>
       <!--van-grid 没有设置column-num属性，默认是4列-->
@@ -40,7 +40,13 @@
         <!-- <van-grid-item v-for="value in 8" :key="value" text="文字"> -->
         <van-grid-item v-for="(item,k) in channelList" :key="item.id">
           <span class="text" :style="{color:k===activeChannelIndex?'red':''}">{{item.name}}</span>
-          <!-- <van-icon class="close-icon" name="close" /> -->
+          <!-- van-icon: 图标组件
+                  name="close": 叉号图标
+                  class="close-icon": 设置样式
+                  v-if="k>0": "推荐"频道不设置叉号
+          -->
+          <van-icon class="close-icon" name="close" v-show="isEdit && k>0"
+            @click="userToRest(item.id,k)" />
         </van-grid-item>
       </van-grid>
     </div>
@@ -65,8 +71,8 @@
 </template>
 
 <script>
-// 导入 获得所有频道数据,添加频道数据 的api函数
-import { apiChannelAll, apiChannelAdd } from '@/api/channel.js'
+// 导入 获得所有频道数据,添加频道数据,删除频道数据 的api函数
+import { apiChannelAll, apiChannelAdd, apiChannelDel } from '@/api/channel.js'
 
 export default {
   name: 'com-channel',
@@ -110,7 +116,8 @@ export default {
   },
   data () {
     return {
-      channelAll: [] // 全部频道
+      channelAll: [], // 全部频道
+      isEdit: false // 是否进入编辑状态
     }
   },
   created () {
@@ -122,7 +129,7 @@ export default {
       const result = await apiChannelAll()
       this.channelAll = result.channels
     },
-    // 添加频道(把"推荐频道"里边的数据添加到"我的频道")
+    // 添加频道("推荐频道"---->"我的频道")
     restToUser (channel) {
       // 1.页面更新数据
       // --channelList 父组件给传递过来的,本身是一个对象,他们的传值模式是"引用"方式
@@ -130,6 +137,17 @@ export default {
       this.channelList.push(channel)
       // 2.localStorage持久更新
       apiChannelAdd(channel)
+    },
+    // 删除频道("我的频道"---->"推荐频道")
+    // --channelID: 删除频道的id,用来给localStorage删除的
+    // --index: 被删除频道在数组中的下标位置,用给页面删除
+    userToRest (channelID, index) {
+      // 1.页面删除数据
+      // --channelList 父组件给传递过来的,本身是一个对象,他们的传值模式是"引用"方式
+      // --父,子组件关于channelList共同操作,一方修改,另一方也可以感知
+      this.channelList.splice(index, 1)
+      // 2.localStorage永久删除
+      apiChannelDel(channelID)
     }
   }
 }

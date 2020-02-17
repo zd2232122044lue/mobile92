@@ -75,16 +75,22 @@ export default {
 </script>
 
 <style scoped lang='less'>
-// 给 更多 频道获得样式
-.channel-more {
-  position: fixed;
-  right: 0;
+/*给 更多 频道设置样式*/
+.channel-more{
+  position:fixed;
+  right:0;
   background-color: white;
-  line-height: 88px;
-  height: 88px;
+  line-height:88px;
+  height:88px;
   width: 90px;
-  text-align: center;
-  font-size: 40px;
+  text-align:center;
+  font-size:40px;
+}
+/*频道列表*/
+.van-tabs {
+  /deep/ .van-tabs__wrap {
+    width: 90%; /*设置频道列表最大宽度，可以避免最后一个频道被按钮覆盖住*/
+  }
 }
 
 // 频道列表

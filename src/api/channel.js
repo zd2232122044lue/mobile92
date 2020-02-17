@@ -43,6 +43,27 @@ export function apiChannelAdd (channel) {
   })
 }
 
+// 删除频道
+// --参数: id(被删除频道的id)
+export function apiChannelDel (id) {
+  return new Promise(function (resolve) {
+    const key = store.state.user.token ? CHANNEL_KET_VIP : CHANNEL_KEY_TRAVEL // 获取缓存的key
+
+    // 频道不能通过localStorage直接对"某个项目"做删除，必须取出来操作
+    // 操作完毕再把数据更新给localStorage
+    const localChannels = localStorage.getItem(key) // 获取缓存
+
+    // 缓存有数据
+    let channels = JSON.parse(localChannels)
+    // 通过id，把被删除的频道中全部的数据里边排除出去
+    channels = channels.filter(item => item.id !== id)
+
+    // 重新写入缓存
+    localStorage.setItem(key, JSON.stringify(channels))
+    resolve() // 成功执行
+  })
+}
+
 // 获取用户频道列表数据
 export function apiChannelList () {
   // 通过Promise封装,通过resolve返回输出具体信息,await修饰就接收到了,在home/index.vue中await apiChannelList()
