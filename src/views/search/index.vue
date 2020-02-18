@@ -46,7 +46,7 @@
         </div>
       </van-cell>
        <!-- 历史联想项目数据展示 -->
-      <van-cell title="Vue 源码解析">
+      <van-cell v-for="(item,k) in suggestHistories" :title="item" :key="k">
       <!-- 删除按钮 -->
       <van-icon 
         v-show="isDeleteData" 
@@ -62,6 +62,8 @@
 <script>
 // 导入获得联想建议数据的api
 import { apiSuggestionList } from '@/api/search'
+// 设置关键字历史记录的localStorage的key的名称,方便后续使用
+const SH = 'suggest-histories'
 
 export default {
   name: 'search-index',
@@ -69,7 +71,9 @@ export default {
     return {
       searchText: '', // 搜索关键词
       suggestionList: [], // 联想建议数据
-      isDeleteData: false // 历史记录开关
+      isDeleteData: false, // 历史记录开关
+      // 联想历史记录(如果本地有数据直接使用,否则设置空数组[])
+      suggestHistories: JSON.parse(localStorage.getItem(SH)) || [] 
     }
   },
   watch: {
@@ -116,6 +120,19 @@ export default {
 
     // 跳转到搜索结果页面
     onSearch(keywords){
+      // 没有联想内容,停止后续处理
+      if(!keywords){
+        return false
+      }
+      // 根据已有的历史记录创建Set对象(Set可以保证相同的联想关键字只存储一份)
+      const data = new Set(this.suggestHistories)
+      // 存储访问的关键字
+      data.add(keywords)
+      // 把添加好的整体历史记录变为Array数组,赋予给data成员,使得页面及时显示(响应式)
+      this.suggestHistories = Array.from(data)
+      // 把联想关键字数组存储到localStorage里(名称为suggest-histories)
+      localStorage.setItem(SH,JSON.stringify(this.suggestHistories))
+
       // 路由跳转
       this.$router.push( {name: 'result',params: { q:keywords } })
     }

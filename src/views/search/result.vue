@@ -49,7 +49,7 @@ export default {
     async onLoad(){
       await this.$sleep(1000) // 延迟一秒
 
-      let result = await apiSearchList({ q:this.q, page: this.page, per_page:this.per_page})
+     let result = await apiSearchList({ q: this.q, page: this.page, per_page: this.per_page })
       // 加载状态结束
       this.loading = false
       if(!result.results.length){
