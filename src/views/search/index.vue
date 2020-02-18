@@ -9,11 +9,16 @@
     <!-- 联想建议 -->
     <van-cell-group>
       <van-cell
-      :title="item"
       icon="search"
       v-for="(item,k) in suggestionList"
       :key="k"
-      />
+      >
+        <!-- 通过slot="title"的命名插槽去覆盖渲染掉title属性
+              v-html: 针对html标签,css样式,字符串内容都可以表现
+              {{}}: 插值表达式只能表现字符串内容 
+        -->
+        <div slot="title" v-html="hightlightCell(item,searchText)"></div>
+      </van-cell>
     </van-cell-group>
   </div>
 </template>
@@ -51,6 +56,25 @@ export default {
         // data接收联想建议数据
         this.suggestionList = result.options
       }, 1000)
+    }
+  },
+  methods:{
+    // 搜索关键字高亮
+    // -item: (例)Vue 1.0.28 源码解析
+    // -keywords: (例)vue
+    hightlightCell(item,keywords){
+      // 创建正则对象的两种方式
+      // --const reg = /^1[35789]\d{9}$/g
+      // --const reg = new RegExp('/^1[35789]\d{9}$/','g') 
+      //  当前情况适合通过第二种情况创建,因为要把keywords变量解析出来
+      const reg = new RegExp(`${keywords}`,'i') // 正则,忽略大小写
+      // 获得到匹配的内容
+      // --能匹配到: rst[0]--->vue
+      // --不能匹配到: rst=null
+      const rst = item.match(reg)
+      // 对关键字进行高亮处理
+      // --字符串.replace(被替换内容/正则,替换内容)
+      return item.replace(reg,`<span style="color:red">${rst[0]}</span>`)
     }
   }
 }
