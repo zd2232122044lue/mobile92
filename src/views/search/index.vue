@@ -12,7 +12,7 @@
       @search="onSearch(searchText)"
     />
     <!-- 联想建议 -->
-    <van-cell-group>
+    <van-cell-group v-if="suggestionList.length>0">
       <van-cell
       icon="search"
       v-for="(item,k) in suggestionList"
@@ -26,6 +26,36 @@
         <div slot="title" v-html="hightlightCell(item,searchText)"></div>
       </van-cell>
     </van-cell-group>
+    <van-cell-group v-else>
+      <!-- 联想历史记录管理 -->
+      <van-cell title="历史记录">
+        <!--  slot="right-icon": 命名插槽给cell单元格的右边显示内容(垃圾桶图标)
+              name="delete": 垃圾桶图标
+              style="line-height:inherit": 设置内容高度与父级一致 
+        -->
+        <van-icon
+          @click="isDeleteData=true"
+          v-show="!isDeleteData"
+          slot="right-icon"
+          name="delete"
+          style="line-height:inherit"
+        ></van-icon>
+        <div v-show="isDeleteData">
+          <span style="margin-right: 10px">全部删除</span>
+          <span @click="isDeleteData=true">完成</span>
+        </div>
+      </van-cell>
+       <!-- 历史联想项目数据展示 -->
+      <van-cell title="Vue 源码解析">
+      <!-- 删除按钮 -->
+      <van-icon 
+        v-show="isDeleteData" 
+        slot="right-icon" 
+        name="close" 
+        style="line-height:inherit"
+      ></van-icon>
+    </van-cell>
+    </van-cell-group>
   </div>
 </template>
 
@@ -38,7 +68,8 @@ export default {
   data () {
     return {
       searchText: '', // 搜索关键词
-      suggestionList: [] // 联想建议数据
+      suggestionList: [], // 联想建议数据
+      isDeleteData: false // 历史记录开关
     }
   },
   watch: {
