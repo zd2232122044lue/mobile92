@@ -2,43 +2,73 @@
   <div class="container">
     <van-nav-bar fixed left-arrow @click-left="$router.back()" title="文章详情"></van-nav-bar>
     <div class="detail">
-      <h3 class="title">美女与野兽</h3>
+      <h3 class="title">{{articleDetail.title}}</h3>
       <div class="author">
         <van-image
           round
           width="1rem"
           height="1rem"
           fit="fill"
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
+          :src="articleDetail.aut_photo"
         />
         <div class="text">
-          <p class="name">一阵清风</p>
-          <p class="time">两周内</p>
+          <p class="name">{{articleDetail.aut_name}}</p>
+          <p class="time">{{articleDetail.pubdate | formatTime}}</p>
         </div>
-        <van-button round size="small" type="info">+ 关注</van-button>
+        <van-button round size="small" :type="articleDetail.is_followed?'default':'info'">
+          {{articleDetail.is_followed?'取消关注':'+关注'}}</van-button>
       </div>
       <div class="content">
-        <p>文章内容文章内容文章内容</p>
+        <p>{{articleDetail.content}}</p>
       </div>
       <div class="zan">
         <van-button
           round
           size="small"
-          class="active"
+          :class="{active:articleDetail.attitude===1}"
           plain
           icon="like-o"
           style="margin-right:8px;"
         >点赞</van-button>
-        <van-button round size="small" plain icon="delete">不喜欢</van-button>
+        <van-button 
+        round 
+        size="small"
+        :class="{active:articleDetail.attitude===0}" 
+        plain 
+        icon="delete">不喜欢</van-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+// 导入根据id获得文章详情信息的api
+import {apiArticleDetail} from '@/api/article'
+
 export default {
-  name: "article"
-};
+  name: "article-index",
+  data(){
+    return {
+      articleDetail: {} // 目标文章详情信息
+    }
+  },
+  computed:{
+    // 简化路由参数获取
+    aid: function(){
+      return this.$route.params.aid
+    }
+  },
+  created(){
+    this.getArticleDetail()
+  },
+  methods:{
+    async getArticleDetail(){
+      let result = await apiArticleDetail(this.aid)
+      console.log(result)
+      this.articleDetail = result
+    }
+  }
+}
 </script>
 
 <style scoped lang='less'>

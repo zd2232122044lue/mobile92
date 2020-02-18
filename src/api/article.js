@@ -55,3 +55,13 @@ export function apiArticleReport ({ articleID, type, remark = '' }) {
     }
   })
 }
+
+// 根据id获得文章详情信息
+// 参数: articleID 文章id
+export function apiArticleDetail (articleID) {
+  return request({
+    url: '/app/v1_0/articles/' + articleID,
+    method: 'get'
+  })
+}
+
