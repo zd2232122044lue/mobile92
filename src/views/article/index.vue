@@ -15,7 +15,10 @@
           <p class="name">{{articleDetail.aut_name}}</p>
           <p class="time">{{articleDetail.pubdate | formatTime}}</p>
         </div>
-        <van-button round size="small" :type="articleDetail.is_followed?'default':'info'">
+        <van-button round size="small"
+          @click="followMe()"
+          :loading="followLoading"
+          :type="articleDetail.is_followed?'default':'info'">
           {{articleDetail.is_followed?'取消关注':'+关注'}}</van-button>
       </div>
       <div class="content">
@@ -43,13 +46,16 @@
 
 <script>
 // 导入根据id获得文章详情信息的api
-import {apiArticleDetail} from '@/api/article'
+import { apiArticleDetail } from '@/api/article'
+// 导入关注作者,取消关注作者的api
+import { apiUserFollow, apiUserUnFollow } from '@/api/user.js'
 
 export default {
   name: "article-index",
   data(){
     return {
-      articleDetail: {} // 目标文章详情信息
+      articleDetail: {} ,// 目标文章详情信息
+      followLoading: false // 关注活动加载标志
     }
   },
   computed:{
@@ -62,12 +68,36 @@ export default {
     this.getArticleDetail()
   },
   methods:{
+    // 获得文章详情信息
     async getArticleDetail(){
       let result = await apiArticleDetail(this.aid)
-      console.log(result)
       this.articleDetail = result
+    },
+    // 关注作者、取消关注作者
+    async followMe () {
+      this.followLoading = true // 开启加载状态
+
+      await this.$sleep(800)// 暂停0.8s
+
+      // 判断当前的关注状态，并做不同的处理活动
+      if (this.articleDetail.is_followed) {
+        // 取消关注
+        await apiUserUnFollow(this.articleDetail.aut_id)
+        // 页面上要更新关注状态--> + 关注 提示
+        this.articleDetail.is_followed = false
+      } else {
+        // 关注(成功或失败)
+        try {
+          await apiUserFollow(this.articleDetail.aut_id)
+          // 页面上要更新关注状态-->取消关注 提示
+          this.articleDetail.is_followed = true
+        } catch (err) {
+          this.$toast.fail('不能自己关注自己！')
+        }
+      }
+   this.followLoading = false // 恢复按钮状态
     }
-  }
+}
 }
 </script>
 
@@ -132,4 +162,3 @@ export default {
   }
 }
 </style>
-

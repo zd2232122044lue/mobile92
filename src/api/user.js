@@ -10,8 +10,6 @@ import request from '@/utils/request.js'
         本来传递的参数为data  data: {mobile:xx,code:xx}
           现在改造为{ mobile, code }(对象结构赋值),使得不用看文档,也可以知道传递的具体参数
         业务组件应用(与之前套路一致)：apiUserLogin({mobile:'13922223333',code:2233})
-
-
 */ 
 export function apiUserLogin({ mobile, code }) {
     // 请求axios,request就是axios的复制品,操作结构完全一致
@@ -28,3 +26,25 @@ export function apiUserLogin({ mobile, code }) {
         // data: 非get请求成员标志
     })
 }
+
+// 关注作者
+// 参数: target 被关注用户id
+export function apiUserFollow (target) {
+    return request({
+      method: 'post',
+      url: '/app/v1_0/user/followings',
+      data: {
+        // 成员简易赋值
+        target
+      }
+    })
+}
+
+// 取消关注作者
+// 参数: target 取消关注用户id
+export function apiUserUnFollow (target) {
+    return request({
+      method: 'delete',
+      url: `/app/v1_0/user/followings/${target}`
+    })
+  }
