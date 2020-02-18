@@ -4,14 +4,20 @@
     <van-nav-bar title="搜索中心" left-arrow @click-left="$router.back()" />
     <!-- van-search 搜索组件
             v-model: 用于控制搜索框中的文字
+            @search: 搜索框敲回车键时会触发
     -->
-    <van-search v-model.trim="searchText" placeholder="请输入搜索关键词"/>
+    <van-search 
+      v-model.trim="searchText" 
+      placeholder="请输入搜索关键词"
+      @search="onSearch(searchText)"
+    />
     <!-- 联想建议 -->
     <van-cell-group>
       <van-cell
       icon="search"
       v-for="(item,k) in suggestionList"
       :key="k"
+      @click="onSearch(item)"
       >
         <!-- 通过slot="title"的命名插槽去覆盖渲染掉title属性
               v-html: 针对html标签,css样式,字符串内容都可以表现
@@ -74,7 +80,13 @@ export default {
       const rst = item.match(reg)
       // 对关键字进行高亮处理
       // --字符串.replace(被替换内容/正则,替换内容)
-      return item.replace(reg,`<span style="color:red">${rst[0]}</span>`)
+      return item.replace(reg, `<span style="color:red">${rst[0]}</span>`)
+    },
+
+    // 跳转到搜索结果页面
+    onSearch(keywords){
+      // 路由跳转
+      this.$router.push( {name: 'result',params: { q:keywords } })
     }
   }
 }
