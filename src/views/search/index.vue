@@ -41,7 +41,7 @@
           style="line-height:inherit"
         ></van-icon>
         <div v-show="isDeleteData">
-          <span style="margin-right: 10px">全部删除</span>
+          <span style="margin-right: 10px" @click="delAllSuggest()">全部删除</span>
           <span @click="isDeleteData=true">完成</span>
         </div>
       </van-cell>
@@ -53,6 +53,7 @@
         slot="right-icon" 
         name="close" 
         style="line-height:inherit"
+        @click="delSuggest(k)"
       ></van-icon>
     </van-cell>
     </van-cell-group>
@@ -135,7 +136,22 @@ export default {
 
       // 路由跳转
       this.$router.push( {name: 'result',params: { q:keywords } })
-    }
+    },
+
+    // 删除"全部"联想建议历史记录
+    delAllSuggest(){
+      // 页面删除
+      this.suggestHistories = [] 
+      // 本地删除
+      localStorage.removeItem(SH)
+    },
+    // 删除"单个"联想建议历史记录
+    delSuggest(index){
+      // 页面删除
+      this.suggestHistories.splice(index,1) 
+      // 本地删除
+      localStorage.setItem(SH,JSON.stringify(this.suggestHistories))
+    },
   }
 }
 </script>
