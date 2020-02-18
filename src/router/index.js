@@ -40,7 +40,9 @@ const routes = [
     component: () => import('@/views/user/login.vue') // 登录
   },
   {
-    path: '/article',
+    // :aid: 路由参数,代表被查看文章id
+    path: '/article/:aid',
+    name: 'article',
     component: () => import('@/views/article/index.vue') // 文章详情
   },
   {

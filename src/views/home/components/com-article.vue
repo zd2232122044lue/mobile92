@@ -30,9 +30,14 @@
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <!-- van-cell: 单元格组件,内容独占一行进行显示
                     title: 标题
+                    @click: 使得 单击 可以跳转至文章详情页面
         -->
         <!-- 模板中使用超大整型的数字,需要执行转变为字符串,调用toString()方法 -->
-        <van-cell v-for="item in articleList" :key="item.art_id.toString()" :title="item.title">
+        <van-cell 
+          v-for="item in articleList" 
+          :key="item.art_id.toString()" 
+          :title="item.title"
+          @click="$router.push({name:'article',params:{aid:item.art_id.toString()}})" >
           <!-- 命名插槽: 体现label的描述信息 -->
           <template slot="label">
             <!-- van-grid: 宫格组件,可以在水平方向上把页面分隔成等宽度的区块，用于展示内容或进行页面导航
@@ -57,9 +62,10 @@
               <!-- 给van-cell的右侧设置叉号按钮
                   van-icon: 图标组件
                       name: 图标样式
+                      @click.stop: 阻止事件冒泡,这样叉号图标被单击后就不向上传递事件，使得自己的单击效果得以保留
               -->
 
-              <van-icon name="close" style="float:right;" @click="displayDialog(item.art_id.toString())" />
+              <van-icon name="close" style="float:right;" @click.stop="displayDialog(item.art_id.toString())" />
               <span>作者: {{item.aut_name}}</span>&nbsp;
               <span>评论: {{item.comm_count}}</span>&nbsp;
               <!-- 使用过滤器 -->

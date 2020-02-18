@@ -151,7 +151,7 @@ export default {
       this.suggestHistories.splice(index,1) 
       // 本地删除
       localStorage.setItem(SH,JSON.stringify(this.suggestHistories))
-    },
+    }
   }
 }
 </script>
