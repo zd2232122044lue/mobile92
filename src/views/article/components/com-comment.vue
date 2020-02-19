@@ -63,6 +63,16 @@
         </van-cell>
       </van-list>
     </van-popup>
+    <!-- 添加评论或回复的小构件 -->
+    <div class="reply-container van-hairline--top">
+      <van-field v-model="contentCorR" placeholder="写评论或回复...">
+        <!-- van-loading设置加载图标，与提交进行配置使用slot="button"命名插槽，
+                表明要给van-field的指定位置填充内容(右侧)
+        -->
+        <van-loading v-if="submitting" slot="button" type="spinner" size="16px"></van-loading>
+        <span class="submit" v-else slot="button">提交</span>
+      </van-field>
+    </div>
   </div>
 </template>
 <script>
@@ -97,7 +107,10 @@ export default {
         list: [],
         loading: false,
         finished: false
-      }
+      },
+      // 添加评论或回复成员
+      contentCorR: '', // 内容
+      submitting: false // 是否正在提交
     }
   },
   methods: {
@@ -181,6 +194,20 @@ export default {
     .van-cell__label {
       width: 400px;
     }
+  }
+}
+// 添加评论或回复构件
+.reply-container {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  height: 88px;
+  width: 100%;
+  background: #f5f5f5;
+  z-index: 9999;
+  .submit {
+    font-size: 24px;
+    color: #3296fa;
   }
 }
 </style>
