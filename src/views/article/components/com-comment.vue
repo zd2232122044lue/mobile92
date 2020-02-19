@@ -65,12 +65,12 @@
     </van-popup>
     <!-- 添加评论或回复的小构件 -->
     <div class="reply-container van-hairline--top">
-      <van-field v-model="contentCorR" placeholder="写评论或回复...">
+      <van-field v-model.trim="contentCorR" placeholder="写评论或回复...">
         <!-- van-loading设置加载图标，与提交进行配置使用slot="button"命名插槽，
                 表明要给van-field的指定位置填充内容(右侧)
         -->
         <van-loading v-if="submitting" slot="button" type="spinner" size="16px"></van-loading>
-        <span class="submit" v-else slot="button">提交</span>
+        <span class="submit" v-else slot="button" @click="add">提交</span>
       </van-field>
     </div>
   </div>
@@ -78,8 +78,8 @@
 <script>
 // 导入文章评论的api
 import { apiCommentList } from '@/api/comment.js'
-// 导入文章评论的回复的api
-import { apiReplyList } from '@/api/reply.js'
+// 导入 文章评论的回复,添加评论/回复 的api
+import { apiReplyList, apiAddCorR } from '@/api/reply.js'
 
 export default {
   name: 'com-comment',
@@ -177,6 +177,51 @@ export default {
       this.replyList.push(...result.results)
       // 接收分页标志的last_id信息
       this.lastID = result.last_id
+    },
+
+    // 添加 评论或回复
+    async add () {
+      // 没有输入内容
+      if (!this.contentCorR) { return false }
+
+      // 开启提交中
+      this.submitting = true
+      // 暂停0.8s
+      await this.$sleep(800)
+      if (this.showReply) {
+        // A.回复
+        //   target: this.nowComID 被激活评论id
+        //   content: this.contentCorR 回复内容
+        //   art_id: this.aid 当前文章id
+        const result = await apiAddCorR({
+          target: this.nowComID,
+          content: this.contentCorR,
+          art_id: this.aid
+        })
+        // result里边可以访问new_obj成员,代表被新添加的回复的对象内容
+        // 在回复列表顶部追加 回复信息(新回复信息置顶显示),使得可以立即展示(响应式)
+        this.replyList.unshift(result.new_obj)
+        // 找到当前回复的评论项目,对回复的数量进行累加操作
+        //  find()可以从大的"数组对象集"中获得某一个小对象
+        //   这个小对象是引用传递出来的,外部对其进行修改
+        //   数组对象集内部可以感知到
+        const comment = this.commentList.find(
+          item => item.com_id.toString() === this.nowComID)
+        // 回复数量累加
+        comment.reply_count++
+      } else {
+        // B.评论
+        const result = await apiAddCorR({
+          target: this.aid,
+          content: this.contentCorR
+        })
+        // 在评论顶部追加 评论信息(新评论信息置顶显示)
+        this.commentList.unshift(result.new_obj)
+      }
+      // 清空输入框
+      this.contentCorR = ''
+      // 结束提交中
+      this.submitting = false
     }
   }
 }

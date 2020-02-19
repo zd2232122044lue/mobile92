@@ -31,3 +31,23 @@ export function apiReplyList ({ commentID, lastID }) {
     }
   })
 }
+
+// 添加评论或回复信息
+// 参数:
+//     target 文章或评论的id(评论文章即为文章id,对评论进行回复则为评论id)
+//     content 评论或回复的内容
+//     art_id 文章id,对评论内容发表回复时,需要传递此参数,表明是指定文章
+//                   对文章进行评论,不需要传此参数
+//     C comment评论
+//     R reply回复
+export function apiAddCorR ({ target, content, art_id = null }) {
+  return request({
+    url: '/app/v1_0/comments',
+    method: 'POST',
+    data: {
+      target,
+      content,
+      art_id
+    }
+  })
+}
