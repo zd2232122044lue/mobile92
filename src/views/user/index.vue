@@ -50,7 +50,7 @@
       <van-cell icon="edit" title="编辑资料" to="/user/profile" is-link />
       <van-cell icon="chat-o" title="小智同学" to="/user/chat" is-link />
       <van-cell icon="setting-o" title="系统设置" is-link />
-      <van-cell icon="warning-o" title="退出登录" to="/login" is-link />
+      <van-cell icon="warning-o" title="退出登录" @click="logout()" is-link />
     </van-cell-group>
   </div>
 </template>
@@ -70,8 +70,29 @@ export default {
     this.getUserInfo()
   },
   methods: {
+    // 获取登录用户信息
     async getUserInfo () {
       this.userInfo = await apiUserInfo()
+    },
+    // 退出系统
+    logout () {
+      // 确认
+      this.$dialog.confirm({
+        title: '退出',
+        message: '确认要退出系统么?'
+      })
+        .then(() => {
+          // 确认逻辑
+          // 数据清除-->用户-->vuex
+          this.$store.commit('clearUser')
+          // 跳转至登录页面
+          this.$router.push('/login')
+        })
+        .catch(() => {
+          // 取消逻辑
+          //  留空. 如果单击取消按钮,$dialog.confirm要返回错误处理,
+          //        这里要通过catch接收,同时不用做任何操作
+        })
     }
   }
 }
