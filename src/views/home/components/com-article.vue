@@ -33,9 +33,9 @@
                     @click: 使得 单击 可以跳转至文章详情页面
         -->
         <!-- 模板中使用超大整型的数字,需要执行转变为字符串,调用toString()方法 -->
-        <van-cell 
-          v-for="item in articleList" 
-          :key="item.art_id.toString()" 
+        <van-cell
+          v-for="item in articleList"
+          :key="item.art_id.toString()"
           :title="item.title"
           @click="$router.push({name:'article',params:{aid:item.art_id.toString()}})" >
           <!-- 命名插槽: 体现label的描述信息 -->

@@ -22,7 +22,7 @@
           {{articleDetail.is_followed?'取消关注':'+关注'}}</van-button>
       </div>
       <div class="content">
-        <p>{{articleDetail.content}}</p>
+        <p v-html="articleDetail.content"></p>
       </div>
       <div class="zan">
         <van-button
@@ -33,13 +33,14 @@
           icon="like-o"
           style="margin-right:8px;"
         >点赞</van-button>
-        <van-button 
-        round 
+        <van-button
+        round
         size="small"
-        :class="{active:articleDetail.attitude===0}" 
-        plain 
+        :class="{active:articleDetail.attitude===0}"
+        plain
         icon="delete">不喜欢</van-button>
       </div>
+      <com-comment></com-comment>
     </div>
   </div>
 </template>
@@ -49,28 +50,33 @@
 import { apiArticleDetail } from '@/api/article'
 // 导入关注作者,取消关注作者的api
 import { apiUserFollow, apiUserUnFollow } from '@/api/user.js'
+// 导入评论组件
+import ComComment from './components/com-comment'
 
 export default {
-  name: "article-index",
-  data(){
+  name: 'article-index',
+  components: {
+    ComComment
+  },
+  data () {
     return {
-      articleDetail: {} ,// 目标文章详情信息
+      articleDetail: {}, // 目标文章详情信息
       followLoading: false // 关注活动加载标志
     }
   },
-  computed:{
+  computed: {
     // 简化路由参数获取
-    aid: function(){
+    aid: function () {
       return this.$route.params.aid
     }
   },
-  created(){
+  created () {
     this.getArticleDetail()
   },
-  methods:{
+  methods: {
     // 获得文章详情信息
-    async getArticleDetail(){
-      let result = await apiArticleDetail(this.aid)
+    async getArticleDetail () {
+      const result = await apiArticleDetail(this.aid)
       this.articleDetail = result
     },
     // 关注作者、取消关注作者
@@ -95,9 +101,9 @@ export default {
           this.$toast.fail('不能自己关注自己！')
         }
       }
-   this.followLoading = false // 恢复按钮状态
+      this.followLoading = false // 恢复按钮状态
     }
-}
+  }
 }
 </script>
 
