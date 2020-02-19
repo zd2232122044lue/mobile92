@@ -28,7 +28,8 @@
           <p>
             <span>{{item.pubdate | formatTime}}</span>
             ·
-            <span @click="showReply=true">{{item.reply_count}}&nbsp;回复</span>
+            <!-- 给回复按钮声明单击事件,传递评论id -->
+            <span @click="openReply(item.com_id.toString())">{{item.reply_count}}&nbsp;回复</span>
           </p>
         </div>
       </van-cell>
@@ -43,20 +44,20 @@
         finished-text="没有更多了"
         @load="onLoadReply"
       >
-        <van-cell v-for="item in reply.list" :key="item" :title="item">
+        <van-cell v-for="item in replyList" :key="item.com_id.toString()">
           <!-- 作者头像 -->
           <div slot="icon">
-            <img class="avatar" src="http://toutiao.meiduo.site/Fn6-mrb5zLTZIRG3yH3jG8HrURdU" alt />
+            <img class="avatar" :src="item.aut_photo" alt />
           </div>
           <!-- 作者名称 -->
           <div slot="title">
-            <span>度娘</span>
+            <span>{{item.aut_name}}</span>
           </div>
           <!-- 评论内容和时间 -->
           <div slot="label">
-            <p>好厉害呀</p>
+            <p v-html="item.content"></p>
             <p>
-              <span>2019-12-30 15:15:15</span>
+              <span>{{item.pubdate | formatTime}}</span>
             </p>
           </div>
         </van-cell>
@@ -67,6 +68,8 @@
 <script>
 // 导入文章评论的api
 import { apiCommentList } from '@/api/comment.js'
+// 导入文章评论的回复的api
+import { apiReplyList } from '@/api/reply.js'
 
 export default {
   name: 'com-comment',
@@ -86,6 +89,9 @@ export default {
       commentList: [], // 评论列表
       commentID: null, // 评论分页标志
       // 回复相关
+      nowComID: '', // 被单击激活的评论id
+      lastID: null, // 分页标志(null,前一次返回的last_id)
+      replyList: [], // 回复列表
       showReply: false, // 回复弹出层是否展示
       reply: {
         list: [],
@@ -130,23 +136,34 @@ export default {
       //   }, 500)
     },
 
+    // 单击回复标志,展示回复弹出层
+    openReply (commentID) {
+      this.nowComID = commentID
+      this.showReply = true // 展开弹出层
+      // 对相关状态做初始化操作
+      this.replyList = [] // 清除旧的回复数据
+      this.reply.finished = false // 激活瀑布流
+      this.lastID = null // 回复分页偏移量
+    },
+
     // 回复瀑布流加载
-    onLoadReply () {
-      // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.reply.list.push(this.reply.list.length + 1)
-        }
-
-        // 加载状态结束
-        this.reply.loading = false
-
-        // 数据全部加载完成
-        if (this.reply.list.length >= 40) {
-          this.reply.finished = true
-        }
-      }, 1000)
+    async onLoadReply () {
+      await this.$sleep(800) // 暂停0.8s
+      const result = await apiReplyList({
+        commentID: this.nowComID,
+        lastID: this.lastID
+      })
+      // 加载状态结束
+      this.loading = false
+      // 数据全部加载完成
+      if (result.results.length === 0) {
+        this.finished = true
+        return false
+      }
+      // 把获取到的回复数据追加给data
+      this.replyList.push(...result.results)
+      // 接收分页标志的last_id信息
+      this.lastID = result.last_id
     }
   }
 }
