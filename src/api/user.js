@@ -56,3 +56,11 @@ export const apiUserInfo = () => {
     method: 'GET'
   })
 }
+
+// 获取用户个人资料
+export function apiUserProfile () {
+  return request({
+    url: '/app/v1_0/user/profile', // 地址
+    method: 'get'
+  })
+}
