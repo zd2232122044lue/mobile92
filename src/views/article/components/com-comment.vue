@@ -3,27 +3,31 @@
     <!--van-list：实现瀑布加载效果-->
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了"
               @load="onLoad">
-      <van-cell v-for="item in list" :key="item">
+      <van-cell v-for="item in commentList" :key="item.com_id.toString()">
         <!-- 作者头像 -->
         <div slot="icon">
           <img class="avatar"
-               src="http://toutiao.meiduo.site/Fn6-mrb5zLTZIRG3yH3jG8HrURdU" alt="">
+               :src="item.aut_photo" alt="">
         </div>
         <!-- 作者名称 -->
         <div slot="title">
-          <span>只是为了好玩儿</span>
+          <span>{{item.aut_name}}</span>
         </div>
         <!-- 点赞 -->
         <div slot="default">
-          <van-button icon="like-o" size="mini" plain> &nbsp;12 </van-button>
+            <!-- type="item.is_liking?'danger':'default'"
+                设置当前用户是否点赞,来设置不同的样式 -->
+          <van-button icon="like-o" size="mini" plain
+            type="item.is_liking?'danger':'default'"
+          > &nbsp;{{item.like_count}} </van-button>
         </div>
         <!-- 评论内容和时间 -->
         <div slot="label">
-          <p>hello world</p>
+          <p>{{item.content}}</p>
           <p>
-            <span>2019-7-17 14:08:20</span>
+            <span>{{item.pubdate | formatTime}}</span>
             ·
-            <span>4&nbsp;回复</span>
+            <span>{{item.reply_count}}&nbsp;回复</span>
           </p>
         </div>
       </van-cell>
@@ -31,29 +35,62 @@
   </div>
 </template>
 <script>
+// 导入文章评论的api
+import { apiCommentList } from '@/api/comment.js'
+
 export default {
   name: 'com-comment',
+  computed: {
+    // 简化路由参数获取
+    aid () {
+      return this.$route.params.aid
+    }
+  },
   data () {
     return {
+      // 瀑布加载相关
       list: [],
       loading: false,
-      finished: false
+      finished: false,
+      // 评论相关
+      commentList: [], // 评论列表
+      commentID: null // 评论分页标志
     }
   },
   methods: {
-    onLoad () {
-      // 异步更新数据
-      setTimeout(() => {
-        for (let i = 0; i < 5; i++) {
-          this.list.push(this.list.length + 1)
-        }
-        // 加载状态结束
-        this.loading = false
-        // 数据全部加载完成
-        if (this.list.length >= 10) {
-          this.finished = true
-        }
-      }, 500)
+    // 瀑布流加载
+    async onLoad () {
+      await this.$sleep(800) // 暂停0.8s
+      // 获取评论列表
+      const result = await apiCommentList({
+        articleID: this.aid,
+        commentID: this.commentID
+      })
+
+      // 加载状态结束
+      this.loading = false
+      // 数据全部加载完成
+      if (result.results.length === 0) {
+        this.finished = true // 瀑布流停止加载
+        return false
+      }
+      // 把获取到的数据追加给data
+      this.commentList.push(...result.results)
+      // 接收commentID
+      this.commentID = result.last_id
+
+    //   // 异步更新数据
+    //   setTimeout(() => {
+    //     for (let i = 0; i < 5; i++) {
+    //       this.list.push(this.list.length + 1)
+    //     }
+    //     // 加载状态结束
+    //     this.loading = false
+    //     // 数据全部加载完成
+    //     if (this.list.length >= 10) {
+    //       this.finished = true
+    //     }
+    //   }, 500)
     }
   }
 }
