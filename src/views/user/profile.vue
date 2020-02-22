@@ -23,7 +23,7 @@
         />
       </van-cell>
       <!-- value=xxx 设置单元格右侧内容部分 -->
-      <van-cell is-link title="名称" :value="userProfile.name"/>
+      <van-cell is-link title="名称" :value="userProfile.name" @click="showName=true"/>
       <van-cell is-link title="性别" :value='userProfile.gender === 0 ? "男" : "女"'/>
       <van-cell is-link title="生日" :value="userProfile.birthday" />
     </van-cell-group>
@@ -31,6 +31,11 @@
     <van-popup v-model="showPhoto" position="bottom">
       <van-cell is-link title="本地相册 选择图片"></van-cell>
       <van-cell is-link title="拍照"></van-cell>
+    </van-popup>
+    <!-- 弹出昵称 -->
+    <van-popup v-model="showName" position="bottom">
+      <!-- 编辑用户昵称  双向绑定用户的昵称 -->
+      <van-field v-model.trim="userProfile.name" type="textarea" rows="3"></van-field>
     </van-popup>
   </div>
 </template>
@@ -44,6 +49,7 @@ export default {
   data () {
     return {
       showPhoto: false, // 是否显示选择头像弹层
+      showName: false, // 是否显示编辑昵称弹层
       // 用户资料表单对象
       userProfile: {
         photo: '',
