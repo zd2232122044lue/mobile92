@@ -64,3 +64,31 @@ export function apiUserProfile () {
     method: 'get'
   })
 }
+
+// 修改用户头像
+// 参数:  fdObj FormData对象,拥有photo成员,代表被上传头像的文件对象
+//           FormData是html5发布的技术,可以实现普通表单域信息和上传文件域信息的收集工作
+export function apiUserPhoto (fdObj) {
+  return request({
+    url: '/app/v1_0/user/photo', // 编辑头像的地址
+    method: 'patch', // 设置头像的类型
+    data: fdObj
+  })
+}
+
+// 更新用户资料
+// 参数:
+//     name 用户昵称
+//     gender 用户性别
+//     birthday 生日
+export function apiSaveProfile ({ name, gender, birthday }) {
+  return request({
+    url: '/app/v1_0/user/profile', // 编辑资料的地址
+    data: {
+      name,
+      gender,
+      birthday
+    },
+    method: 'patch'
+  })
+}

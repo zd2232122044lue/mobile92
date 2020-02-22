@@ -5,7 +5,7 @@
       @click-left="$router.back()"
       title="编辑资料"
       right-text="保存"
-      @click-right="save()"
+      @click-right="saveProfile()"
     ></van-nav-bar>
     <van-cell-group>
       <van-cell is-link title="头像" center @click="showPhoto=true">
@@ -29,7 +29,7 @@
     </van-cell-group>
     <!-- 弹出选择头像 -->
     <van-popup v-model="showPhoto" position="bottom">
-      <van-cell is-link title="本地相册 选择图片"></van-cell>
+      <van-cell is-link title="本地相册 选择图片" @click="$refs.mypic.click()"></van-cell>
       <van-cell is-link title="拍照"></van-cell>
     </van-popup>
     <!-- 弹出昵称 -->
@@ -67,12 +67,14 @@
         @confirm="confirmDate"
       ></van-datetime-picker>
     </van-popup>
+    <!-- 选择文件控件 -->
+    <input ref="mypic" @change="startUpload()" type="file" style="display:none">
   </div>
 </template>
 
 <script>
-// 导入获取用户资料的api
-import { apiUserProfile } from '@/api/user.js'
+// 导入获取用户资料,上传用户头像,更新用户资料的api
+import { apiUserProfile, apiUserPhoto, apiSaveProfile } from '@/api/user.js'
 // 导入dayjs模块
 import dayjs from 'dayjs'
 
@@ -100,6 +102,20 @@ export default {
     this.getUserProfile() // 调用获取用户资料的方法
   },
   methods: {
+    // 实现图片上传
+    async startUpload () {
+      // 获得上传好的图片对象信息
+      // console.dir(this.$refs.mypic) // 上传文件域的dom对象(从中感知上传文件信息)
+      // 通过观察得知： this.$refs.mypic.files[0] 就是上传的文件的对象数据
+
+      const fd = new FormData() // 创建FormData对象
+      fd.append('photo', this.$refs.mypic.files[0]) // 往FormData对象中添加参数
+      const result = await apiUserPhoto(fd)
+      // 应该 把地址 同步设置给 当前页面的数据
+      this.userProfile.photo = result.photo // 将上传成功的头像设置给当前头像
+      this.showPhoto = false // 关闭弹层
+    },
+
     // 时间选择器 被单击“确定”按钮后的回调处理
     // val:固定代表选择好的时间信息
     confirmDate (val) {
@@ -132,8 +148,10 @@ export default {
       this.nowDate = new Date(this.userProfile.birthday)
     },
 
-    save () {
-      this.$toast.success('保存成功')
+    // 更新用户资料
+    async saveProfile () {
+      await apiSaveProfile(this.userProfile)
+      this.$toast.success('更新用户资料成功')
     }
   }
 }
