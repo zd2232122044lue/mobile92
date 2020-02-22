@@ -8,7 +8,7 @@
       @click-right="save()"
     ></van-nav-bar>
     <van-cell-group>
-      <van-cell is-link title="头像" center>
+      <van-cell is-link title="头像" center @click="showPhoto=true">
         <!--
         slot="default" 自定义单元格右侧内容
         fit="cover"  图片填充模式 保持宽高缩放图片，使图片的短边能完全显示出来，裁剪长边
@@ -27,6 +27,11 @@
       <van-cell is-link title="性别" :value='userProfile.gender === 0 ? "男" : "女"'/>
       <van-cell is-link title="生日" :value="userProfile.birthday" />
     </van-cell-group>
+    <!-- 弹出选择头像 -->
+    <van-popup v-model="showPhoto" position="bottom">
+      <van-cell is-link title="本地相册 选择图片"></van-cell>
+      <van-cell is-link title="拍照"></van-cell>
+    </van-popup>
   </div>
 </template>
 
@@ -38,6 +43,7 @@ export default {
   name: 'user-profile',
   data () {
     return {
+      showPhoto: false, // 是否显示选择头像弹层
       // 用户资料表单对象
       userProfile: {
         photo: '',
