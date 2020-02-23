@@ -9,7 +9,7 @@
       </div>
       <div class="chat-item right">
         <div class="chat-pao">没看正忙，挖沙呢</div>
-        <van-image  fit="cover" round src="https://img.yzcdn.cn/vant/cat.jpeg" />
+        <van-image  fit="cover" round :src="userInfo.photo" />
       </div>
     </div>
     <div class="reply-container van-hairline--top">
@@ -24,18 +24,28 @@
 <script>
 // 导入小智头像
 import XZImg from '@/assets/img/xz.png'
+// 导入获取用户信息的api
+import { apiUserInfo } from '@/api/user'
 export default {
   name: 'user-chat',
   data () {
     return {
+      apiUserInfo: null, // 用户信息
       XZImg, // 小智头像
       content: '', // 即将发表的聊天内容
       loading: false // 是否正在提交留言
     }
   },
+  created () {
+    this.getUserInfo()
+  },
   methods: {
     send () {
 
+    },
+    // 获取用户信息
+    async getUserInfo () {
+      this.userInfo = await apiUserInfo()
     }
   }
 }
