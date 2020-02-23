@@ -54,6 +54,11 @@ export default {
     this.getUserInfo()
     this.setSocket()
   },
+  // 页面销毁之前的钩子函数
+  beforeDestory () {
+    // 销毁连接
+    this.socket.close() // 销毁连接
+  },
   methods: {
     // 建立与 服务器端的socket连接
     setSocket () {
@@ -90,6 +95,10 @@ export default {
         // 数据追加完毕，设置滚动条跑到最底部，以便显示最新数据
         this.scrollBottom()
       })
+      // // 服务器端---->客户端  告知连接已关闭(非必须的)
+      // this.socket.on('disconnect', () => {
+      //   console.log('连接已关闭')
+      // })
     },
 
     // 获取用户信息
