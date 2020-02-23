@@ -1,6 +1,6 @@
 <template>
   <!-- scroll-wrapper 固定容器，通过css样式控制能够生成滚动条，将来需要使用滚动动作。 -->
-  <div class="scroll-wrapper">
+  <div class="scroll-wrapper" @scroll="remember()" ref="myarticle">
     <!-- 下拉刷新 -->
     <!-- van-pull-refresh: 下拉刷新
           基础用法: 下拉刷新时会触发 refresh 事件，在事件的回调函数中可以进行同步或异步操作，
@@ -102,6 +102,7 @@ export default {
   },
   data () {
     return {
+      qianTop: 0, // 滚动条滚动的位置
       // 下拉动作完成的文字提示
       downSuccessText: '', // 文章更新成功/文章已经是最新的
       nowArticleID: '', // 不感兴趣文章id
@@ -121,6 +122,13 @@ export default {
   //   // 获取文章列表
   //   this.getArticleList()
   // },
+  // keep-alive 组件激活后就调用的方法
+  activated () {
+  // 滚动条位置恢复操作
+    if (this.qianTop) {
+      this.$refs.myarticle.scrollTop = this.qianTop
+    }
+  },
   methods: {
     // 获得文章列表
     async getArticleList () {
@@ -221,6 +229,12 @@ export default {
       // --根据下标 从articleList中做删除操作
       // ----数组.splice(下标,长度) 删除数组的指定元素
       this.articleList.splice(index, 1)
+    },
+
+    // 记录滚动条的滚动到的位置
+    // 滚动条随时滚动，remember随时调用
+    remember () {
+      this.qianTop = this.$refs.myarticle.scrollTop
     }
   }
 }

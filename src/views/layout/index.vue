@@ -19,7 +19,11 @@
           showNavBar:true===>其他===>没有noTop
     -->
     <div class="my-wrapper" :class="{noTop:!showNavBar}">
-      <router-view></router-view>
+      <!-- 给 子路由 占位符标签通过 keep-alive包裹，以达到缓存效果
+        对 首页频道 对应的文章列表组件进行缓存，使得切换使用时不要重新加载 -->
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </div>
     <!-- 标签栏 (页面底部显示(本身有样式设置))
       van-tabbar

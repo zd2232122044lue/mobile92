@@ -2,6 +2,7 @@
   <!-- 小智同学的页面结构 -->
  <div class="container">
     <van-nav-bar fixed left-arrow @click-left="$router.back()" title="小智同学"></van-nav-bar>
+    <van-button @click="uncon()">断开连接</van-button>
     <div class="chat-list" ref="talkArea">
       <div
         class="chat-item"
@@ -60,6 +61,11 @@ export default {
     this.socket.close() // 销毁连接
   },
   methods: {
+    // 关闭连接
+    uncon () {
+      this.socket.close()
+    },
+
     // 建立与 服务器端的socket连接
     setSocket () {
       // query代表以请求字符串形式传递token参数
@@ -95,10 +101,10 @@ export default {
         // 数据追加完毕，设置滚动条跑到最底部，以便显示最新数据
         this.scrollBottom()
       })
-      // // 服务器端---->客户端  告知连接已关闭(非必须的)
-      // this.socket.on('disconnect', () => {
-      //   console.log('连接已关闭')
-      // })
+      // 服务器端---->客户端  告知连接已关闭(非必须的)
+      this.socket.on('disconnect', () => {
+        console.log('连接已关闭')
+      })
     },
 
     // 获取用户信息
