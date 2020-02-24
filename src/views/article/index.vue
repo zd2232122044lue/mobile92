@@ -20,6 +20,7 @@
           :loading="followLoading"
           :type="articleDetail.is_followed?'default':'info'">
           {{articleDetail.is_followed?'取消关注':'+关注'}}</van-button>
+          <van-button @click="$store.commit('clearToken')">单独清除token</van-button>
       </div>
       <div class="content">
         <p v-html="articleDetail.content"></p>
